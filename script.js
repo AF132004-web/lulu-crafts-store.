@@ -96,7 +96,7 @@ function renderProducts() {
     products.forEach((product, index) => {
         const safeName = product.name.replace(/\s+/g, '-');
         const isHero = index === 0;
-        const loadingAttr = isHero ? '' : 'loading="lazy" decoding="async"';
+        const loadingAttr = isHero ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
         
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -108,7 +108,7 @@ function renderProducts() {
                 <i class="ri-sparkle-line sparkle-icon"></i>
             </div>
             <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
+                <h2 class="product-title">${product.name}</h2>
                 <p class="product-description">${product.description}</p>
                 <div class="price-display">
                     <span class="bs-price">$${formatPrice(product.price)}</span>
@@ -197,7 +197,7 @@ async function syncWithFirebase() {
         products.forEach((product, index) => {
             const safeName = product.name.replace(/\s+/g, '-');
             const isHero = index === 0;
-            const loadingAttr = isHero ? '' : 'loading="lazy" decoding="async"';
+            const loadingAttr = isHero ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
             
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -210,7 +210,7 @@ async function syncWithFirebase() {
                     <i class="ri-sparkle-line sparkle-icon"></i>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-title">${product.name}</h3>
+                    <h2 class="product-title">${product.name}</h2>
                     <p class="product-description">${product.description}</p>
                     <div class="price-display">
                         <span class="bs-price">$${formatPrice(product.price)}</span>
@@ -685,17 +685,19 @@ function initDockMagnification() {
                     return;
                 }
 
-                dockItems.forEach(item => {
+                // Separating reads and writes to prevent layout thrashing
+                const itemStates = Array.from(dockItems).map(item => {
                     const rect = item.getBoundingClientRect();
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
-
                     const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+                    return { item, distance };
+                });
 
-                    // Parámetros de magnificación optimizados para dock vertical
-                    const maxDistance = 120; // Radio ligeramente menor
-                    const maxScale = 1.4;    // Escala más sutil para no tapar contenido
+                const maxDistance = 120; // Radio ligeramente menor
+                const maxScale = 1.4;    // Escala más sutil para no tapar contenido
 
+                itemStates.forEach(({ item, distance }) => {
                     if (distance < maxDistance) {
                         const scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
                         item.style.transform = `scale(${scale})`;

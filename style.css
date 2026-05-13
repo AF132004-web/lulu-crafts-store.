@@ -17,6 +17,19 @@
     --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* Font Overrides para Swap */
+@font-face {
+    font-family: 'remixicon';
+    src: url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.woff2') format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+    font-display: swap;
+}
+
 /* Reset y base */
 * {
     margin: 0;
@@ -300,7 +313,7 @@ h4 {
 
 .product-card {
     --font-color: var(--primary-color);
-    --font-color-sub: rgba(127, 78, 168, 0.85);
+    --font-color-sub: #3b1c55;
     --bg-color: rgba(255, 255, 255, 0.35);
     width: 100%;
     background: var(--bg-color);
@@ -315,6 +328,7 @@ h4 {
     will-change: transform;
     position: relative;
     box-shadow: 0 8px 32px 0 rgba(127, 78, 168, 0.1);
+    min-height: 440px;
 }
 
 .product-card:hover {
@@ -398,13 +412,13 @@ h4 {
 }
 
 .product-stock.available {
-    background: rgba(37, 211, 102, 0.1);
-    color: #1a8a42;
+    background: rgba(37, 211, 102, 0.15);
+    color: #0c5727;
 }
 
 .product-stock.soldout {
-    background: rgba(255, 68, 68, 0.1);
-    color: #cc0000;
+    background: rgba(255, 68, 68, 0.15);
+    color: #990000;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1656,6 +1670,7 @@ h4 {
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    min-height: 320px;
 }
 
 .delivery-header {
@@ -1664,8 +1679,7 @@ h4 {
 
 .delivery-title {
     font-family: 'Playfair Display', serif;
-    /* O la que uses para tÃ­tulos */
-    color: #7F4EA8;
+    color: #4b2b67;
     font-size: 24px;
     margin-bottom: 10px;
 }
@@ -1697,6 +1711,7 @@ h4 {
     padding: 20px;
     border-radius: 15px;
     transition: transform 0.3s ease;
+    min-height: 180px;
 }
 
 .location-card:hover {

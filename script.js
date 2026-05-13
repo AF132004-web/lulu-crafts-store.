@@ -3,6 +3,25 @@ const FIREBASE_URL = "https://lulu-crafts13-default-rtdb.firebaseio.com";
 
 // Catálogo de Productos con imágenes reales de la tienda
 const DEFAULT_DESCRIPTION = 'Colección minimalista esencial. Excelente calidad y calce perfecto.';
+const FALLBACK_IMAGE = 'assets/logo-tienda.webp';
+
+// Función para asegurar que las imágenes locales usen WebP
+function ensureWebp(url) {
+    if (!url) return FALLBACK_IMAGE;
+    if (url.startsWith('assets/') && !url.endsWith('.webp')) {
+        const lastDot = url.lastIndexOf('.');
+        if (lastDot !== -1) {
+            return url.substring(0, lastDot) + '.webp';
+        }
+    }
+    return url;
+}
+
+// Función para manejar errores de carga de imagen
+window.handleImageError = function(img) {
+    img.onerror = null;
+    img.src = FALLBACK_IMAGE;
+};
 
 let products = [];
 
@@ -67,7 +86,8 @@ let currentModalImage = '';
 // Función para cambiar la imagen al clic en un color dentro del modal
 window.switchModalVariant = function(colorName, fotoUrl, hexColor, btnEl) {
     selectedColor = colorName;
-    currentModalImage = fotoUrl;
+    const finalFotoUrl = ensureWebp(fotoUrl);
+    currentModalImage = finalFotoUrl;
     
     // Actualizar texto del color si existe
     const colorTextEl = document.getElementById('modal-selected-color-text');
@@ -80,7 +100,7 @@ window.switchModalVariant = function(colorName, fotoUrl, hexColor, btnEl) {
     img.classList.add('variant-fade-out');
     
     setTimeout(() => {
-        img.src = fotoUrl;
+        img.src = finalFotoUrl;
         img.classList.remove('variant-fade-out');
         img.classList.add('variant-fade-in');
         
@@ -102,9 +122,10 @@ function renderProducts() {
         card.className = 'product-card';
         card.dataset.price = product.price;
         card.id = `product-${safeName}`;
+        const imageUrl = ensureWebp(product.image);
         card.innerHTML = `
             <div class="product-image">
-                <img src="${product.image}" alt="${product.name}" ${loadingAttr} width="400" height="400">
+                <img src="${imageUrl}" alt="${product.name}" ${loadingAttr} width="400" height="400" onerror="handleImageError(this)">
                 <i class="ri-sparkle-line sparkle-icon"></i>
             </div>
             <div class="product-info">
@@ -178,7 +199,7 @@ async function syncWithFirebase() {
                     id: newIdCounter++,
                     name: fbProductName,
                     price: parseFloat(data[fbProductName].price) || 0,
-                    image: data[fbProductName].foto || 'assets/logo-tienda.jpg',
+                    image: ensureWebp(data[fbProductName].foto),
                     color: 'Único',
                     colorHex: '#cccccc',
                     variants: data[fbProductName].variantes || null,
@@ -204,9 +225,10 @@ async function syncWithFirebase() {
             card.dataset.price = product.price;
             card.id = `product-${safeName}`;
             card.style.display = 'flex';
+            const imageUrl = ensureWebp(product.image);
             card.innerHTML = `
                 <div class="product-image">
-                    <img src="${product.image}" alt="${product.name}" ${loadingAttr} width="400" height="400" style="${product.image === 'assets/logo-tienda.jpg' ? 'object-fit: contain; padding: 20px;' : ''}">
+                    <img src="${imageUrl}" alt="${product.name}" ${loadingAttr} width="400" height="400" onerror="handleImageError(this)" style="${imageUrl === FALLBACK_IMAGE ? 'object-fit: contain; padding: 20px;' : ''}">
                     <i class="ri-sparkle-line sparkle-icon"></i>
                 </div>
                 <div class="product-info">
@@ -296,8 +318,9 @@ window.openProductModal = function (productId) {
 </label>`;
     }
 
+    const imageUrl = ensureWebp(currentModalImage);
     modalBody.innerHTML = `
-        <img src="${currentModalImage}" class="modal-product-img" id="modal-main-img" alt="${currentProduct.name}">
+        <img src="${imageUrl}" class="modal-product-img" id="modal-main-img" alt="${currentProduct.name}" onerror="handleImageError(this)">
         <h2 class="modal-product-title">${currentProduct.name}</h2>
         <p class="modal-product-price">$${formatPrice(currentProduct.price)}</p>
         

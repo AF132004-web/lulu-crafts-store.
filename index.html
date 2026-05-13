@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe | Tienda de Ropa Minimalista</title>
+    <meta name="description" content="Colección esencial de ropa minimalista con lujo y elegancia.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Tipografía elegante de Lulu Crafts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Pinyon+Script&display=swap"
+        rel="stylesheet">
+    <!-- Iconos RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- FontAwesome for Checkout Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK (v8 para compatibilidad simple con scripts directos) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+
+<body>
+    <div class="top-announcement">
+        <span>Tienda online 24/7 🛍️ • Aceptamos pagos en Bs. a tasa BCV y divisas en efectivo</span>
+    </div>
+
+    <!-- Navegación y Header -->
+    <header class="header">
+        <div class="header-spacer"></div>
+        <div class="brand-container">
+            <img src="assets/logo-tienda.jpg" alt="Lulu Crafts Profile" class="profile-photo" loading="lazy">
+            <h1 class="brand-name text-animate" id="brandName" data-animation="blurInUp" data-by="character">Lulu Crafts
+            </h1>
+        </div>
+        <div class="cart-icon" id="cartIcon">
+            <i class="ri-shopping-bag-line"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </header>
+
+    <!-- Catálogo de Productos -->
+    <main class="catalog">
+        <h1 class="catalog-title">Colección Esencial</h1>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Los productos se inyectan dinámicamente mediante JS -->
+        </div>
+    </main>
+
+    <!-- Panel de Entregas -->
+    <section class="delivery-panel glass-panel">
+        <div class="delivery-header">
+            <h2 class="delivery-title">Puntos de Entrega</h2>
+            <p class="delivery-schedule">
+                <i class="fa-regular fa-clock"></i> Lunes a Viernes | Toma de órdenes: 10:00 AM | Envíos: 1:00 PM
+            </p>
+        </div>
+
+        <div class="locations-grid">
+            <a href="https://www.google.com/maps/search/Centro+Comercial+Gran+Bazar+Maracaibo" target="_blank"
+                class="location-link">
+                <div class="location-card">
+                    <div class="map-icon-container">
+                        <i class="fa-solid fa-map map-base"></i>
+                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                    </div>
+                    <h3>C.C. Gran Bazar</h3>
+                    <p>Punto de entrega centro</p>
+                    <span class="view-map-text">Ver en mapa <i
+                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </div>
+            </a>
+
+            <a href="https://www.google.com/maps/search/Sambil+Maracaibo" target="_blank" class="location-link">
+                <div class="location-card">
+                    <div class="map-icon-container">
+                        <i class="fa-solid fa-map map-base"></i>
+                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                    </div>
+                    <h3>C.C. Sambil</h3>
+                    <p>Punto de entrega norte</p>
+                    <span class="view-map-text">Ver en mapa <i
+                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </div>
+            </a>
+
+            <a href="https://www.google.com/maps/search/Centro+Comercial+Metrosol+Maracaibo" target="_blank"
+                class="location-link">
+                <div class="location-card">
+                    <div class="map-icon-container">
+                        <i class="fa-solid fa-map map-base"></i>
+                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                    </div>
+                    <h3>C.C. Metrosol</h3>
+                    <p>Punto de entrega sur</p>
+                    <span class="view-map-text">Ver en mapa <i
+                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </div>
+            </a>
+        </div>
+
+    </section>
+
+
+    <!-- Dock de Redes Sociales Estilo Magic UI -->
+    <div class="dock-container" id="socialDock">
+        <div class="dock-wrapper">
+            <!-- Instagram -->
+            <a href="https://instagram.com/lulu_crafts1309" target="_blank" class="dock-item" data-tooltip="Instagram">
+                <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="insta-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f09433;stop-opacity:1" />
+                            <stop offset="25%" style="stop-color:#e6683c;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#dc2743;stop-opacity:1" />
+                            <stop offset="75%" style="stop-color:#cc2366;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#insta-grad)"
+                        d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z">
+                    </path>
+                </svg>
+            </a>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/584126818999" target="_blank" class="dock-item" data-tooltip="WhatsApp">
+                <svg viewBox="0 0 175.216 175.552" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="whatsapp-grad" x1="85.915" x2="86.535" y1="32.567" y2="137.092"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#57d163" />
+                            <stop offset="1" stop-color="#23b33a" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="#b3b3b3"
+                        d="m54.532 138.45 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.523h.023c33.707 0 61.139-27.426 61.153-61.135.006-16.335-6.349-31.696-17.895-43.251A60.75 60.75 0 0 0 87.94 25.983c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.558zm-40.811 23.544L24.16 123.88c-6.438-11.154-9.825-23.808-9.821-36.772.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954zm0 0"
+                        opacity="0.3" />
+                    <path fill="#fff"
+                        d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z" />
+                    <path fill="url(#whatsapp-grad)"
+                        d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.559 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.524h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.929z" />
+                    <path fill="#fff" fill-rule="evenodd"
+                        d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647" />
+                </svg>
+            </a>
+
+        </div>
+    </div>
+
+    </div>
+    </div>
+
+
+    <!-- Modal de Selección de Producto -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <button class="back-btn"
+                onclick="productModal.classList.remove('active'); document.body.style.overflow = '';">
+                <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+                    <path
+                        d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                    </path>
+                </svg>
+                <span>Back</span>
+            </button>
+            <button class="close-modal" id="closeModal" aria-label="Cerrar modal"><i class="ri-close-line"></i></button>
+            <div class="modal-body" id="modalBody">
+                <!-- El contenido del modal se inyecta mediante JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar del Carrito -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart" id="closeCart" aria-label="Cerrar carrito"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items del carrito -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalPrice">$0.00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn">Ir a Pagar</button>
+        </div>
+    </div>
+
+    <!-- Modal de Resumen y Checkout (WhatsApp) -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-content checkout-content">
+            <button class="back-btn"
+                onclick="checkoutModal.classList.remove('active'); cartSidebar.classList.add('active');">
+                <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+                    <path
+                        d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                    </path>
+                </svg>
+                <span>Back</span>
+            </button>
+            <button class="close-modal" id="closeCheckout" aria-label="Cerrar checkout"><i
+                    class="ri-close-line"></i></button>
+            <h2>Resumen de tu Pedido</h2>
+            <div class="checkout-summary" id="checkoutSummary">
+                <!-- Resumen de items -->
+            </div>
+            <hr class="pm-hr">
+
+            <!-- Selector de Método de Pago -->
+            <div class="payment-method-container">
+                <p class="payment-title">Método de Pago</p>
+
+                <label class="payment-option">
+                    <div class="payment-option-content">
+                        <i class="ri-smartphone-line" style="font-size: 28px; line-height: 1;"></i>
+                        <p class="payment-option-text">Pago Móvil</p>
+                    </div>
+                    <input type="radio" name="payment" value="pago_movil" class="payment-radio" checked>
+                </label>
+
+                <label class="payment-option">
+                    <div class="payment-option-content">
+                        <i class="ri-coin-line" style="font-size: 28px; line-height: 1;"></i>
+                        <p class="payment-option-text">Binance</p>
+                    </div>
+                    <input type="radio" name="payment" value="binance" class="payment-radio">
+                </label>
+            </div>
+
+            <button class="gumroad-button" id="payBtn">Pagar</button>
+
+            <button class="whatsapp-btn" id="whatsappBtn">
+                <i class="ri-whatsapp-line"></i> Finalizar Pedido por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Detalles Pago Móvil -->
+    <div class="modal-overlay" id="pagoMovilModal" style="z-index: 1100;">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            <div class="pm-container">
+                <button class="close-modal" id="closePmModal" aria-label="Cerrar modal"
+                    style="position: absolute; top: -40px; right: 0; color: white;"><i
+                        class="ri-close-line"></i></button>
+                <div class="pm-card pm-cart">
+                    <button class="back-btn"
+                        onclick="pagoMovilModal.classList.remove('active'); checkoutModal.classList.add('active');"
+                        style="margin-left: 15px; margin-top: 15px;">
+                        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1"
+                            viewBox="0 0 1024 1024">
+                            <path
+                                d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                            </path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <label class="pm-title">CHECKOUT PAGO MÓVIL</label>
+                    <div class="pm-steps">
+                        <div class="pm-step">
+                            <div class="checkout-section">
+                                <h3 class="pm-title-inner">DATOS PAGO MÓVIL</h3>
+
+                                <div class="pm-box">
+                                    <div class="pm-info">
+                                        <span class="pm-label">C.I:</span>
+                                        <span class="pm-value" id="pm-ci">301800133</span>
+                                    </div>
+                                    <button class="copy-btn" onclick="copyData('pm-ci', this)" title="Copiar Cédula">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+
+                                <div class="pm-box">
+                                    <div class="pm-info">
+                                        <span class="pm-label">Teléfono:</span>
+                                        <span class="pm-value" id="pm-telefono">04126818999</span>
+                                    </div>
+                                    <button class="copy-btn" onclick="copyData('pm-telefono', this)"
+                                        title="Copiar Teléfono">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+
+                                <div class="pm-box">
+                                    <div class="pm-info">
+                                        <span class="pm-label">Banco:</span>
+                                        <span class="pm-value">Banco de Venezuela</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="pm-hr">
+                            <div>
+                                <span>INSTRUCCIONES</span>
+                                <p>1. Realiza el pago a los datos indicados.</p>
+                                <p>2. Guarda el número de referencia.</p>
+                                <p>3. Confirma tu pedido por WhatsApp.</p>
+                            </div>
+                            <hr class="pm-hr">
+                            <!-- SECCIÓN DE RESUMEN Y CASILLA DE TOTAL (Dentro de tu Modal) -->
+                            <div class="checkout-section">
+                                <h3 class="pm-title-inner" style="margin-bottom: 10px;">RESUMEN DEL PEDIDO</h3>
+
+                                <!-- Desglose de Subtotal y Delivery -->
+                                <div class="checkout-details">
+                                    <div class="detail-row">
+                                        <span>Subtotal Ropa:</span>
+                                        <span id="resumen-subtotal">$0</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span>Delivery (Maracaibo):</span>
+                                        <span>$2</span>
+                                    </div>
+                                </div>
+
+                                <!-- Casilla Premium del Total -->
+                                <div class="pm-box total-premium-box">
+                                    <div class="pm-info-left">
+                                        <span class="pm-label">TOTAL A PAGAR</span>
+                                        <span class="pm-value bs-total" id="resumen-total-bs">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card pm-checkout">
+                    <div class="pm-footer">
+                        <label class="pm-price" id="pmFinalPrice">$0</label>
+                        <button class="confirm-3d-btn" id="confirmPmBtn">
+                            <span class="button_top">Confirmar Pago</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalles Binance -->
+    <div class="modal-overlay" id="binanceModal" style="z-index: 1100;">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            <div class="pm-container">
+                <button class="close-modal" id="closeBinanceModal" aria-label="Cerrar modal"
+                    style="position: absolute; top: -40px; right: 0; color: white;"><i
+                        class="ri-close-line"></i></button>
+                <div class="pm-card pm-cart">
+                    <button class="back-btn"
+                        onclick="binanceModal.classList.remove('active'); checkoutModal.classList.add('active');"
+                        style="margin-left: 15px; margin-top: 15px;">
+                        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1"
+                            viewBox="0 0 1024 1024">
+                            <path
+                                d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                            </path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <label class="pm-title">CHECKOUT BINANCE</label>
+                    <div class="pm-steps">
+                        <div class="pm-step">
+                            <div class="checkout-section">
+                                <h3 class="pm-title-inner">DATOS BINANCE PAY</h3>
+
+                                <div class="pm-box" style="margin-bottom: 10px;">
+                                    <div class="pm-info">
+                                        <span class="pm-label">Correo Binance Pay:</span>
+                                        <span class="pm-value" id="binance-email">prietoa976@gmail.com</span>
+                                    </div>
+                                    <button class="copy-btn" onclick="copyData('binance-email', this)" title="Copiar Correo">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="pm-box">
+                                    <div class="pm-info">
+                                        <span class="pm-label">Monto Exacto:</span>
+                                        <span class="pm-value" id="binance-monto-copiar">$0</span>
+                                    </div>
+                                    <button class="copy-btn" onclick="copyData('binance-monto-copiar', this)" title="Copiar Monto">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+
+                                <div style="text-align: center; margin-top: 20px;">
+                                    <span class="pm-label">CÓDIGO QR</span>
+                                    <p style="font-size: 12px; color: #555555; margin-bottom: 12px;">Escanea para pagar
+                                        directamente</p>
+                                    <div class="qr-container">
+                                        <img src="qr-binance.jpg" alt="QR Binance" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="pm-hr">
+                            <div class="checkout-section">
+                                <h3 class="pm-title-inner" style="margin-bottom: 10px;">RESUMEN DEL PEDIDO</h3>
+
+                                <div class="checkout-details">
+                                    <div class="detail-row">
+                                        <span>Subtotal Ropa:</span>
+                                        <span id="binance-subtotal">$0</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span>Delivery (Maracaibo):</span>
+                                        <span>$2</span>
+                                    </div>
+                                </div>
+
+                                <div class="pm-box total-premium-box">
+                                    <div class="pm-info-left">
+                                        <span class="pm-label">TOTAL A PAGAR</span>
+                                        <span class="pm-value bs-total" id="binance-total-premium">$0</span>
+                                    </div>
+                                    <div class="pm-info-right">
+                                        <span class="pm-label">MÉTODO</span>
+                                        <span class="pm-value" style="color: white !important; font-size: 14px;">Binance
+                                            Pay</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card pm-checkout">
+                    <div class="pm-footer" style="flex-direction: column; gap: 10px; align-items: stretch;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                            <label class="pm-price" id="binanceFinalPrice">$0</label>
+                            <button class="confirm-3d-btn" id="confirmBinanceBtn" style="background: #FCD535; border-color: #FCD535; flex: 1; margin-left: 15px;">
+                                <span class="button_top" style="background: #FCD535; color: #1E2329; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg" alt="Binance" style="width: 18px; margin-right: 8px; filter: brightness(0) saturate(100%) invert(10%) sepia(10%) saturate(1636%) hue-rotate(174deg) brightness(97%) contrast(90%);">
+                                    Pagar con Binance Pay
+                                </span>
+                            </button>
+                        </div>
+                        <button class="whatsapp-btn" id="confirmBinanceWhatsappBtn" style="width: 100%; border-radius: 8px; padding: 12px; margin-top: 5px;">
+                            <i class="ri-whatsapp-line"></i> Confirmar Pago por WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Notificaciones Custom -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

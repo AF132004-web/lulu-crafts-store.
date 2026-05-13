@@ -3,24 +3,24 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Luxe | Tienda de Ropa Minimalista</title>
     <meta name="description" content="Colección esencial de ropa minimalista con lujo y elegancia.">
     <link rel="stylesheet" href="style.css">
     <!-- Tipografía elegante de Lulu Crafts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Pinyon+Script&display=swap" as="style">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Pinyon+Script&display=swap"
         rel="stylesheet">
     <!-- Iconos RemixIcon -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" as="style">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- FontAwesome for Checkout Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Firebase SDK (v8 para compatibilidad simple con scripts directos) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link rel="preload" href="assets/logo-tienda.jpg" as="image">
+    <!-- Integración lista para Fetch API nativa -->
 </head>
 
 <body>
@@ -32,7 +32,7 @@
     <header class="header">
         <div class="header-spacer"></div>
         <div class="brand-container">
-            <img src="assets/logo-tienda.jpg" alt="Lulu Crafts Profile" class="profile-photo" loading="lazy">
+            <img src="assets/logo-tienda.jpg" alt="Lulu Crafts Profile" class="profile-photo" width="80" height="80">
             <h1 class="brand-name text-animate" id="brandName" data-animation="blurInUp" data-by="character">Lulu Crafts
             </h1>
         </div>
@@ -234,17 +234,13 @@
                 </label>
             </div>
 
-            <button class="gumroad-button" id="payBtn">Pagar</button>
-
-            <button class="whatsapp-btn" id="whatsappBtn">
-                <i class="ri-whatsapp-line"></i> Finalizar Pedido por WhatsApp
-            </button>
+            <button class="gumroad-button" id="payBtn" style="margin-top: 20px;">Pagar</button>
         </div>
     </div>
 
     <!-- Modal Detalles Pago Móvil -->
     <div class="modal-overlay" id="pagoMovilModal" style="z-index: 1100;">
-        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0; max-width: 550px;">
             <div class="pm-container">
                 <button class="close-modal" id="closePmModal" aria-label="Cerrar modal"
                     style="position: absolute; top: -40px; right: 0; color: white;"><i
@@ -303,11 +299,8 @@
                                 <p>3. Confirma tu pedido por WhatsApp.</p>
                             </div>
                             <hr class="pm-hr">
-                            <!-- SECCIÓN DE RESUMEN Y CASILLA DE TOTAL (Dentro de tu Modal) -->
                             <div class="checkout-section">
                                 <h3 class="pm-title-inner" style="margin-bottom: 10px;">RESUMEN DEL PEDIDO</h3>
-
-                                <!-- Desglose de Subtotal y Delivery -->
                                 <div class="checkout-details">
                                     <div class="detail-row">
                                         <span>Subtotal Ropa:</span>
@@ -318,8 +311,6 @@
                                         <span>$2</span>
                                     </div>
                                 </div>
-
-                                <!-- Casilla Premium del Total -->
                                 <div class="pm-box total-premium-box">
                                     <div class="pm-info-left">
                                         <span class="pm-label">TOTAL A PAGAR</span>
@@ -345,7 +336,7 @@
 
     <!-- Modal Detalles Binance -->
     <div class="modal-overlay" id="binanceModal" style="z-index: 1100;">
-        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0; max-width: 550px;">
             <div class="pm-container">
                 <button class="close-modal" id="closeBinanceModal" aria-label="Cerrar modal"
                     style="position: absolute; top: -40px; right: 0; color: white;"><i
@@ -392,7 +383,7 @@
                                     <p style="font-size: 12px; color: #555555; margin-bottom: 12px;">Escanea para pagar
                                         directamente</p>
                                     <div class="qr-container">
-                                        <img src="qr-binance.jpg" alt="QR Binance" loading="lazy">
+                                        <img src="qr-binance.jpg" alt="QR Binance" width="200" height="200" loading="lazy" decoding="async">
                                     </div>
                                 </div>
                             </div>
@@ -429,15 +420,6 @@
 
                 <div class="pm-card pm-checkout">
                     <div class="pm-footer" style="flex-direction: column; gap: 10px; align-items: stretch;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                            <label class="pm-price" id="binanceFinalPrice">$0</label>
-                            <button class="confirm-3d-btn" id="confirmBinanceBtn" style="background: #FCD535; border-color: #FCD535; flex: 1; margin-left: 15px;">
-                                <span class="button_top" style="background: #FCD535; color: #1E2329; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg" alt="Binance" style="width: 18px; margin-right: 8px; filter: brightness(0) saturate(100%) invert(10%) sepia(10%) saturate(1636%) hue-rotate(174deg) brightness(97%) contrast(90%);">
-                                    Pagar con Binance Pay
-                                </span>
-                            </button>
-                        </div>
                         <button class="whatsapp-btn" id="confirmBinanceWhatsappBtn" style="width: 100%; border-radius: 8px; padding: 12px; margin-top: 5px;">
                             <i class="ri-whatsapp-line"></i> Confirmar Pago por WhatsApp
                         </button>
@@ -447,10 +429,11 @@
         </div>
     </div>
 
+
     <!-- Contenedor de Notificaciones Custom -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>

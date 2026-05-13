@@ -1,96 +1,10 @@
-// Configuración de Firebase
-const firebaseConfig = {
-    databaseURL: "https://lulu-crafts13-default-rtdb.firebaseio.com/"
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// URL Base de Firebase para Fetch
+const FIREBASE_URL = "https://lulu-crafts13-default-rtdb.firebaseio.com";
 
 // Catálogo de Productos con imágenes reales de la tienda
 const DEFAULT_DESCRIPTION = 'Colección minimalista esencial. Excelente calidad y calce perfecto.';
 
-let products = [
-    {
-        id: 1,
-        name: 'Body Amarillo',
-        price: 10.00,
-        image: 'assets/body-amarillo.png',
-        color: 'Amarillo',
-        colorHex: '#FFD700',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 2,
-        name: 'Body Manga Corta',
-        price: 10.00,
-        image: 'assets/body-blanco-estilo-zara.png',
-        color: 'Blanco',
-        colorHex: '#FFFFFF',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 3,
-        name: 'Body Amarillo Manga Larga',
-        price: 11.50,
-        image: 'assets/body-amarillo-manga-larga.png',
-        color: 'Amarillo',
-        colorHex: '#FFD700',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 4,
-        name: 'Body Celeste',
-        price: 10.00,
-        image: 'assets/body-celeste.png',
-        color: 'Celeste',
-        colorHex: '#87CEEB',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 5,
-        name: 'Body Celeste Manga Larga',
-        price: 11.50,
-        image: 'assets/body-celeste-manga-larga.png',
-        color: 'Celeste',
-        colorHex: '#87CEEB',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 6,
-        name: 'Body Marrón',
-        price: 10.00,
-        image: 'assets/body-marron.png',
-        color: 'Marrón',
-        colorHex: '#8B4513',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 7,
-        name: 'Body Negro Manga Larga',
-        price: 11.50,
-        image: 'assets/body-negro-manga-larga.png',
-        color: 'Negro',
-        colorHex: '#000000',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 8,
-        name: 'Body Blanco Estilo Zara',
-        price: 12.50,
-        image: 'assets/body-blanco-estilo-zara.png',
-        color: 'Blanco',
-        colorHex: '#FFFFFF',
-        description: DEFAULT_DESCRIPTION
-    },
-    {
-        id: 9,
-        name: 'Body Rojo Estilo Zara',
-        price: 12.50,
-        image: 'assets/body-rojo-estilo-zara.png',
-        color: 'Rojo',
-        colorHex: '#FF0000',
-        description: DEFAULT_DESCRIPTION
-    }
-];
+let products = [];
 
 let cart = [];
 let currentProduct = null;
@@ -147,14 +61,50 @@ function formatPrice(value) {
 
 let isFirebaseInitialized = false;
 
+// Variable global para la imagen seleccionada en el modal
+let currentModalImage = '';
+
+// Función para cambiar la imagen al clic en un color dentro del modal
+window.switchModalVariant = function(colorName, fotoUrl, hexColor, btnEl) {
+    selectedColor = colorName;
+    currentModalImage = fotoUrl;
+    
+    // Actualizar texto del color si existe
+    const colorTextEl = document.getElementById('modal-selected-color-text');
+    if (colorTextEl) colorTextEl.innerText = colorName;
+    
+    // Animación sutil de la imagen del modal
+    const img = document.getElementById('modal-main-img');
+    if (!img) return;
+    
+    img.classList.add('variant-fade-out');
+    
+    setTimeout(() => {
+        img.src = fotoUrl;
+        img.classList.remove('variant-fade-out');
+        img.classList.add('variant-fade-in');
+        
+        setTimeout(() => img.classList.remove('variant-fade-in'), 300);
+    }, 150);
+};
+
 // 1. Renderizar Productos en el Catálogo
 function renderProducts() {
-    productGrid.innerHTML = products.map(product => {
+    productGrid.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    
+    products.forEach((product, index) => {
         const safeName = product.name.replace(/\s+/g, '-');
-        return `
-        <div class="product-card" data-price="${product.price}" id="product-${safeName}">
+        const isHero = index === 0;
+        const loadingAttr = isHero ? '' : 'loading="lazy" decoding="async"';
+        
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.price = product.price;
+        card.id = `product-${safeName}`;
+        card.innerHTML = `
             <div class="product-image">
-                <img src="${product.image}" alt="${product.name}" loading="lazy">
+                <img src="${product.image}" alt="${product.name}" ${loadingAttr} width="400" height="400">
                 <i class="ri-sparkle-line sparkle-icon"></i>
             </div>
             <div class="product-info">
@@ -170,16 +120,36 @@ function renderProducts() {
                     <i class="ri-shopping-cart-2-line"></i>
                 </button>
             </div>
-        </div>
         `;
-    }).join('');
+        fragment.appendChild(card);
+    });
+    
+    productGrid.appendChild(fragment);
 }
 
-// 2. SINCRONIZACIÓN EN TIEMPO REAL CON FIREBASE
-function syncWithFirebase() {
-    const productsRef = database.ref('/productos/');
-    productsRef.on('value', (snapshot) => {
-        const data = snapshot.val() || {};
+// 2. SINCRONIZACIÓN CON FIREBASE VIA FETCH
+async function syncWithFirebase() {
+    try {
+        const response = await fetch(`${FIREBASE_URL}/productos.json`);
+        if (!response.ok) throw new Error('Error al conectar con la base de datos de productos');
+        
+        const data = await response.json() || {};
+        
+        // Sincronizar también información de la tienda (ej. foto de perfil)
+        try {
+            const storeResponse = await fetch(`${FIREBASE_URL}/tienda.json`);
+            if (storeResponse.ok) {
+                const storeData = await storeResponse.json();
+                if (storeData && storeData.foto_perfil) {
+                    const profilePhotoEl = document.querySelector('.profile-photo');
+                    if (profilePhotoEl) {
+                        profilePhotoEl.src = storeData.foto_perfil;
+                    }
+                }
+            }
+        } catch (storeError) {
+            console.error("No se pudo cargar la configuración de la tienda:", storeError);
+        }
 
         // Guardar la base de productos originales (los primeros 9)
         const baseProducts = products.filter(p => p.id <= 9);
@@ -192,7 +162,11 @@ function syncWithFirebase() {
                 let mergedProduct = { ...p };
                 if (data[p.name].price) mergedProduct.price = parseFloat(data[p.name].price);
                 if (data[p.name].descripcion) mergedProduct.description = data[p.name].descripcion;
+                if (data[p.name].foto) mergedProduct.image = data[p.name].foto;
+                if (data[p.name].variantes) mergedProduct.variants = data[p.name].variantes;
                 dynamicProducts.push(mergedProduct);
+            } else {
+                dynamicProducts.push(p); // Mantener el producto original si no está en Firebase
             }
         });
 
@@ -204,9 +178,10 @@ function syncWithFirebase() {
                     id: newIdCounter++,
                     name: fbProductName,
                     price: parseFloat(data[fbProductName].price) || 0,
-                    image: 'assets/logo-tienda.jpg',
+                    image: data[fbProductName].foto || 'assets/logo-tienda.jpg',
                     color: 'Único',
                     colorHex: '#cccccc',
+                    variants: data[fbProductName].variantes || null,
                     description: data[fbProductName].descripcion || DEFAULT_DESCRIPTION
                 });
             }
@@ -215,13 +190,23 @@ function syncWithFirebase() {
         // Actualizar el arreglo de productos y re-renderizar
         products = dynamicProducts;
         
-        // Renderizar el HTML de nuevo para los productos nuevos
-        productGrid.innerHTML = products.map(product => {
+        // Renderizar el HTML usando DocumentFragment
+        productGrid.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        
+        products.forEach((product, index) => {
             const safeName = product.name.replace(/\s+/g, '-');
-            return `
-            <div class="product-card" data-price="${product.price}" id="product-${safeName}" style="display: flex;">
+            const isHero = index === 0;
+            const loadingAttr = isHero ? '' : 'loading="lazy" decoding="async"';
+            
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.price = product.price;
+            card.id = `product-${safeName}`;
+            card.style.display = 'flex';
+            card.innerHTML = `
                 <div class="product-image">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy" style="${product.image === 'assets/logo-tienda.jpg' ? 'object-fit: contain; padding: 20px;' : ''}">
+                    <img src="${product.image}" alt="${product.name}" ${loadingAttr} width="400" height="400" style="${product.image === 'assets/logo-tienda.jpg' ? 'object-fit: contain; padding: 20px;' : ''}">
                     <i class="ri-sparkle-line sparkle-icon"></i>
                 </div>
                 <div class="product-info">
@@ -235,9 +220,11 @@ function syncWithFirebase() {
                         <i class="ri-shopping-cart-2-line"></i>
                     </button>
                 </div>
-            </div>
             `;
-        }).join('');
+            fragment.appendChild(card);
+        });
+        
+        productGrid.appendChild(fragment);
 
         // Actualizar estados de stock visualmente
         products.forEach(product => {
@@ -249,8 +236,12 @@ function syncWithFirebase() {
         
         // Actualizar precios de carrito si es necesario
         updateCart();
-    });
+    } catch (error) {
+        console.error("Error sincronizando catálogo:", error);
+    }
 }
+
+// El llamado a syncWithFirebase se realiza dentro de DOMContentLoaded
 
 function actualizarDOMStock(productName, stock) {
     const safeName = productName.replace(/\s+/g, '-');
@@ -270,10 +261,43 @@ function actualizarDOMStock(productName, stock) {
 window.openProductModal = function (productId) {
     currentProduct = products.find(p => p.id === productId);
     selectedSize = 'Talla Única'; // Por ahora todas las prendas son talla única
-    selectedColor = currentProduct.color; // Color preseleccionado basado en el producto
+    selectedColor = currentProduct.color; // Color por defecto
+    currentModalImage = currentProduct.image; // Imagen por defecto
+
+    let colorOptionsHTML = '';
+    
+    // Si el producto tiene variantes de color desde Firebase
+    if (currentProduct.variants && typeof currentProduct.variants === 'object') {
+        const colors = Object.keys(currentProduct.variants);
+        
+        // Seleccionar el primero por defecto
+        selectedColor = colors[0];
+        currentModalImage = currentProduct.variants[selectedColor].foto || currentProduct.image;
+        
+        colorOptionsHTML = colors.map((colorName, i) => {
+            const v = currentProduct.variants[colorName];
+            const hex = v.hex || '#cccccc';
+            const foto = v.foto || currentProduct.image;
+            const isChecked = i === 0 ? 'checked' : '';
+            return `
+<label class="radio-button">
+  <input type="radio" name="color-selection" value="${colorName}" ${isChecked} onchange="switchModalVariant('${colorName}', '${foto}', '${hex}', this)" />
+  <span class="radio"></span>
+  ${colorName}
+</label>`;
+        }).join('');
+    } else {
+        // Producto sin variantes (color único)
+        colorOptionsHTML = `
+<label class="radio-button">
+  <input type="radio" name="color-selection" value="${currentProduct.color}" checked onchange="switchModalVariant('${currentProduct.color}', '${currentProduct.image}', '${currentProduct.colorHex || '#cccccc'}', this)" />
+  <span class="radio"></span>
+  ${currentProduct.color}
+</label>`;
+    }
 
     modalBody.innerHTML = `
-        <img src="${currentProduct.image}" class="modal-product-img" alt="${currentProduct.name}">
+        <img src="${currentModalImage}" class="modal-product-img" id="modal-main-img" alt="${currentProduct.name}">
         <h2 class="modal-product-title">${currentProduct.name}</h2>
         <p class="modal-product-price">$${formatPrice(currentProduct.price)}</p>
         
@@ -288,12 +312,9 @@ window.openProductModal = function (productId) {
 
         <div class="option-group">
             <span class="option-label">Color</span>
-            <div class="color-options">
-                <button class="color-btn selected" style="background-color: ${currentProduct.colorHex}" 
-                        onclick="selectColor('${currentProduct.color}', this)" 
-                        aria-label="${currentProduct.color}" title="${currentProduct.color}"></button>
+            <div style="display: flex; flex-wrap: wrap; margin-top: -10px;">
+                ${colorOptionsHTML}
             </div>
-            <p class="selected-color-name">Color: <strong>${currentProduct.color}</strong></p>
         </div>
 
         <button class="add-to-cart-btn" onclick="addToCart()">Añadir al Carrito</button>
@@ -390,7 +411,7 @@ window.addToCart = function () {
         productId: currentProduct.id,
         name: currentProduct.name,
         price: currentProduct.price,
-        image: currentProduct.image,
+        image: currentModalImage, // Imagen de la variante seleccionada en el modal
         size: selectedSize,
         color: selectedColor
     };
@@ -429,24 +450,6 @@ function updateCart() {
     cartTotalPrice.innerHTML = `$${formatPrice(total)}`;
 }
 
-// 3. CALCULAR TOTAL EN EL CHECKOUT (Subtotal ropa + $2 Delivery)
-function actualizarTotalModal(precioRopa) {
-    const totalUsd = precioRopa + COSTO_DELIVERY;
-
-    // Actualizamos los textos en la casilla lila de Pago Móvil
-    const subtotalEl = document.getElementById('resumen-subtotal');
-    const totalBsEl = document.getElementById('resumen-total-bs');
-
-    if (subtotalEl) subtotalEl.innerText = "$" + formatPrice(precioRopa);
-    if (totalBsEl) totalBsEl.innerText = "$" + formatPrice(totalUsd);
-
-    // Actualizamos los textos en la casilla lila de Binance
-    const binanceSubtotalEl = document.getElementById('binance-subtotal');
-    const binanceTotalPremiumEl = document.getElementById('binance-total-premium');
-
-    if (binanceSubtotalEl) binanceSubtotalEl.innerText = "$" + formatPrice(precioRopa);
-    if (binanceTotalPremiumEl) binanceTotalPremiumEl.innerText = "$" + formatPrice(totalUsd);
-}
 
 window.removeFromCart = function (id) {
     cart = cart.filter(item => item.id !== id);
@@ -485,7 +488,22 @@ checkoutBtn.addEventListener('click', () => {
     `).join('');
 
     const total = cart.reduce((sum, item) => sum + item.price, 0);
-    actualizarTotalModal(total);
+    const totalFinal = total + COSTO_DELIVERY;
+
+    checkoutSummary.innerHTML += `
+        <div class="summary-item" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
+            <div class="summary-item-title">Subtotal Ropa</div>
+            <span class="checkout-item-price">$${formatPrice(total)}</span>
+        </div>
+        <div class="summary-item">
+            <div class="summary-item-title">Delivery (Maracaibo)</div>
+            <span class="checkout-item-price">$${formatPrice(COSTO_DELIVERY)}</span>
+        </div>
+        <div class="summary-item" style="margin-top: 5px; font-weight: bold; font-size: 1.1em;">
+            <div class="summary-item-title">Total a Pagar</div>
+            <span class="checkout-item-price">$${formatPrice(totalFinal)}</span>
+        </div>
+    `;
 
     checkoutModal.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -495,31 +513,6 @@ closeCheckoutBtn.addEventListener('click', () => {
     checkoutModal.classList.remove('active');
     document.body.style.overflow = '';
 });
-
-whatsappBtn.addEventListener('click', () => {
-    // Código de país (58 para Venezuela) + número
-    const phoneNumber = "584126818999";
-
-    let message = "¡Hola! Me gustaría realizar el siguiente pedido desde la tienda:\n\n";
-
-    cart.forEach((item, index) => {
-        message += `${index + 1}. *${item.name}*\n   Talla: ${item.size}\n   Color: ${item.color}\n   Precio: $${formatPrice(item.price)}\n\n`;
-    });
-
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const totalFinal = total + COSTO_DELIVERY;
-    message += `*Subtotal Ropa:* $${formatPrice(total)}\n`;
-    message += `*Delivery (Maracaibo):* $${formatPrice(COSTO_DELIVERY)}\n`;
-    message += `*Total a pagar: $${formatPrice(totalFinal)}*\n\n`;
-    message += "Quedo atento/a para finalizar el pago y el envío. ¡Gracias!";
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-    // Abrir WhatsApp en una nueva pestaña
-    window.open(whatsappUrl, '_blank');
-});
-
 payBtn.addEventListener('click', () => {
     const selectedPaymentElement = document.querySelector('input[name="payment"]:checked');
     if (!selectedPaymentElement) return;
@@ -529,10 +522,19 @@ payBtn.addEventListener('click', () => {
     const totalConDelivery = total + COSTO_DELIVERY;
 
     if (selectedPayment === 'pago_movil') {
+        const resumenSubtotal = document.getElementById('resumen-subtotal');
+        const resumenTotalBs = document.getElementById('resumen-total-bs');
+        const pmFinalPrice = document.getElementById('pmFinalPrice');
+        
+        if (resumenSubtotal) resumenSubtotal.textContent = '$' + formatPrice(total);
         if (resumenTotalBs) resumenTotalBs.textContent = '$' + formatPrice(totalConDelivery);
         if (pmFinalPrice) pmFinalPrice.textContent = '$' + formatPrice(totalConDelivery);
         pagoMovilModal.classList.add('active');
     } else if (selectedPayment === 'binance') {
+        const binanceSubtotal = document.getElementById('binance-subtotal');
+        const binanceTotalPremium = document.getElementById('binance-total-premium');
+        const binanceFinalPrice = document.getElementById('binanceFinalPrice');
+        
         if (binanceSubtotal) binanceSubtotal.textContent = '$' + formatPrice(total);
         if (binanceTotalPremium) binanceTotalPremium.textContent = '$' + formatPrice(totalConDelivery);
         if (binanceFinalPrice) binanceFinalPrice.textContent = '$' + formatPrice(totalConDelivery);
@@ -542,63 +544,45 @@ payBtn.addEventListener('click', () => {
     }
 });
 
-closePmModal.addEventListener('click', () => {
-    pagoMovilModal.classList.remove('active');
-});
-
-closeBinanceModal.addEventListener('click', () => {
-    binanceModal.classList.remove('active');
-});
-
-confirmPmBtn.addEventListener('click', () => {
-    const phoneNumber = "584126818999"; // Añadido 58 para enrutamiento correcto
-
-    let message = "¡Hola! He realizado un pago móvil para mi pedido:\n\n";
-
-    cart.forEach((item, index) => {
-        message += `${index + 1}. *${item.name}*\n   Talla: ${item.size}\n   Color: ${item.color}\n   Precio: $${formatPrice(item.price)}\n\n`;
+if (closePmModal) {
+    closePmModal.addEventListener('click', () => {
+        pagoMovilModal.classList.remove('active');
     });
+}
 
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const totalFinal = total + COSTO_DELIVERY;
-    message += `*Subtotal:* $${formatPrice(total)}\n`;
-    message += `*Delivery:* $${formatPrice(COSTO_DELIVERY)}\n`;
-    message += `*Total pagado: $${formatPrice(totalFinal)}*\n`;
-    message += `*Método:* Pago Móvil\n\n`;
+if (closeBinanceModal) {
+    closeBinanceModal.addEventListener('click', () => {
+        binanceModal.classList.remove('active');
+    });
+}
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+if (confirmPmBtn) {
+    confirmPmBtn.addEventListener('click', () => {
+        const phoneNumber = "584126818999";
+        let message = "¡Hola! He realizado un pago móvil para mi pedido:\n\n";
 
-    window.open(whatsappUrl, '_blank');
-});
+        cart.forEach((item, index) => {
+            message += `${index + 1}. *${item.name}*\n   Talla: ${item.size}\n   Color: ${item.color}\n   Precio: $${formatPrice(item.price)}\n\n`;
+        });
 
-confirmBinanceBtn.addEventListener('click', () => {
-    // 1. Calcular el monto total (Ropa + Delivery) y aplicar formateo estricto
-    const totalRopa = cart.reduce((sum, item) => sum + item.price, 0);
-    const totalFinal = totalRopa + COSTO_DELIVERY;
-    const montoFormateado = formatPrice(totalFinal);
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        const totalFinal = total + COSTO_DELIVERY;
+        message += `*Subtotal:* $${formatPrice(total)}\n`;
+        message += `*Delivery:* $${formatPrice(COSTO_DELIVERY)}\n`;
+        message += `*Total pagado: $${formatPrice(totalFinal)}*\n`;
+        message += `*Método:* Pago Móvil\n\n`;
 
-    // 2. Crear notificación en Firebase para el Bot de Telegram
-    const notificacionId = Date.now().toString();
-    database.ref('/pagos_binance/' + notificacionId).set({
-        monto: montoFormateado,
-        estado: 'Pendiente',
-        fecha: new Date().toISOString(),
-        id: notificacionId
-    }).catch(err => console.error("Error enviando notificación a Firebase:", err));
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
-    // 3. Mostrar alerta con instrucciones y redirigir
-    alert(`POR FAVOR COPIA LOS SIGUIENTES DATOS:\n\nCorreo: prietoa976@gmail.com\nMonto: $${montoFormateado}\n\nSerás redirigido a Binance para completar el pago manual. Una vez transferido, regresa aquí y pulsa "Confirmar Pago por WhatsApp".`);
-    const binanceUrl = `https://www.binance.com/es/pay`;
-    window.open(binanceUrl, '_blank');
-});
+        window.open(whatsappUrl, '_blank');
+    });
+}
 
-// Evento exclusivo para enviar confirmación de Binance por WhatsApp
 const confirmBinanceWhatsappBtn = document.getElementById('confirmBinanceWhatsappBtn');
 if (confirmBinanceWhatsappBtn) {
     confirmBinanceWhatsappBtn.addEventListener('click', () => {
         const phoneNumber = "584126818999";
-        
         const totalRopa = cart.reduce((sum, item) => sum + item.price, 0);
         const totalFinal = totalRopa + COSTO_DELIVERY;
         const montoFormateado = formatPrice(totalFinal);
@@ -622,7 +606,7 @@ if (confirmBinanceWhatsappBtn) {
     });
 }
 
-// Función para copiar al portapapeles
+// Función para copiar al portapapeles (mantenida por si se usa en otro lado)
 window.copyToClipboard = function (text, iconElement) {
     navigator.clipboard.writeText(text).then(() => {
         const originalClass = iconElement.className;
@@ -683,45 +667,53 @@ function initDockMagnification() {
     if (!dockWrapper) return;
 
     // Detectar movimiento cerca del dock (lado izquierdo)
+    let isTicking = false;
     window.addEventListener('mousemove', (e) => {
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
+        if (!isTicking) {
+            window.requestAnimationFrame(() => {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
 
-        // Solo activar si el mouse está en el tercio izquierdo de la pantalla
-        if (mouseX > 250) {
-            dockItems.forEach(item => {
-                item.style.transform = 'scale(1)';
-                item.style.marginTop = '0';
-                item.style.marginBottom = '0';
+                // Solo activar si el mouse está en el tercio izquierdo de la pantalla
+                if (mouseX > 250) {
+                    dockItems.forEach(item => {
+                        item.style.transform = 'scale(1)';
+                        item.style.marginTop = '0';
+                        item.style.marginBottom = '0';
+                    });
+                    isTicking = false;
+                    return;
+                }
+
+                dockItems.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+
+                    // Parámetros de magnificación optimizados para dock vertical
+                    const maxDistance = 120; // Radio ligeramente menor
+                    const maxScale = 1.4;    // Escala más sutil para no tapar contenido
+
+                    if (distance < maxDistance) {
+                        const scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
+                        item.style.transform = `scale(${scale})`;
+
+                        // Espaciado vertical dinámico
+                        const marginValue = (scale - 1) * 10;
+                        item.style.marginTop = `${marginValue}px`;
+                        item.style.marginBottom = `${marginValue}px`;
+                    } else {
+                        item.style.transform = 'scale(1)';
+                        item.style.marginTop = '0';
+                        item.style.marginBottom = '0';
+                    }
+                });
+                isTicking = false;
             });
-            return;
+            isTicking = true;
         }
-
-        dockItems.forEach(item => {
-            const rect = item.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
-
-            // Parámetros de magnificación optimizados para dock vertical
-            const maxDistance = 120; // Radio ligeramente menor
-            const maxScale = 1.4;    // Escala más sutil para no tapar contenido
-
-            if (distance < maxDistance) {
-                const scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
-                item.style.transform = `scale(${scale})`;
-
-                // Espaciado vertical dinámico
-                const marginValue = (scale - 1) * 10;
-                item.style.marginTop = `${marginValue}px`;
-                item.style.marginBottom = `${marginValue}px`;
-            } else {
-                item.style.transform = 'scale(1)';
-                item.style.marginTop = '0';
-                item.style.marginBottom = '0';
-            }
-        });
     });
 
     // Reset total al salir

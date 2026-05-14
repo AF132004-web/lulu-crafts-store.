@@ -589,7 +589,7 @@ if (confirmPmBtn) {
         }
 
         const reference = document.getElementById('pago-referencia').value.trim();
-        const phoneNumber = "584129045914";
+        const phoneNumber = "584126818999";
         const total = cart.reduce((sum, item) => sum + item.price, 0);
         const totalFinal = total + COSTO_DELIVERY;
         const totalFormateado = formatPrice(totalFinal);

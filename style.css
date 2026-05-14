@@ -597,12 +597,12 @@ h4 {
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
 }
 
 .modal-product-price {
     font-size: 1.2rem;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
     margin-bottom: 2rem;
     font-weight: 500;
     font-family: var(--font-primary);
@@ -619,7 +619,7 @@ h4 {
     margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
 }
 
 .size-options {
@@ -631,24 +631,33 @@ h4 {
     width: 45px;
     height: 45px;
     border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.5);
+    background: #F3E8FF; /* Lila Suave */
     font-family: var(--font-primary);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition-smooth);
-    border-radius: 50%;
-    color: var(--primary-color);
+    border-radius: 20px;
+    padding: 8px 15px;
+    width: auto;
+    height: auto;
+    color: #000000; /* Negro Absoluto */
 }
 
 .size-btn:hover {
     background: rgba(255, 255, 255, 0.8);
 }
 
-.size-btn.selected {
-    border-color: var(--primary-color);
-    background-color: var(--primary-color);
-    color: white;
+.size-btn.selected, .selected-size {
+    border-color: #7F4EA8 !important;
+    background: linear-gradient(135deg, #E9D5FF, #D8B4FE) !important; /* Mismo gradiente que añadir al carrito */
+    color: #000000 !important; /* Negro Absoluto */
+    font-weight: 700 !important;
+    box-shadow: 0 4px 15px rgba(127, 78, 168, 0.2) !important;
+}
+
+.selected-size i {
+    color: #000000 !important;
 }
 
 /* ===== Simple Radio Button ===== */
@@ -659,7 +668,7 @@ h4 {
   margin: 10px;
   position: relative;
   align-items: center;
-  color: var(--primary-color);
+  color: #000000; /* Negro Absoluto */
   font-family: var(--font-primary);
   font-weight: 500;
   cursor: pointer;
@@ -710,8 +719,8 @@ h4 {
 .add-to-cart-btn {
     width: 100%;
     padding: 1.2rem;
-    background: linear-gradient(135deg, #7F4EA8, #BA8CBE);
-    color: white;
+    background: linear-gradient(135deg, #E9D5FF, #D8B4FE); /* Lila Suave */
+    color: #000000; /* Negro Absoluto */
     border: none;
     font-family: var(--font-primary);
     font-size: 1rem;

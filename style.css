@@ -754,7 +754,7 @@ h4 {
 .cart-header h2 {
     font-weight: 600;
     font-size: 1.6rem;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
 }
 
 .close-cart {
@@ -762,7 +762,7 @@ h4 {
     border: none;
     font-size: 1.8rem;
     cursor: pointer;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
 }
 
 .cart-items {
@@ -801,11 +801,12 @@ h4 {
     font-size: 1.1rem;
     margin-bottom: 0.4rem;
     font-family: var(--font-primary);
+    color: #000000; /* Negro Absoluto */
 }
 
 .cart-item-variant {
     font-size: 0.85rem;
-    color: var(--secondary-color);
+    color: #000000; /* Negro Absoluto */
     margin-bottom: 0.8rem;
     font-weight: 500;
 }
@@ -813,7 +814,7 @@ h4 {
 .cart-item-price {
     font-weight: 600;
     font-size: 1.1rem;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
 }
 
 .remove-item {
@@ -844,15 +845,15 @@ h4 {
     font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    color: var(--primary-color);
+    color: #000000; /* Negro Absoluto */
     font-family: var(--font-primary);
 }
 
 .checkout-btn {
     width: 100%;
     padding: 1.2rem;
-    background: linear-gradient(135deg, #7F4EA8, #BA8CBE);
-    color: white;
+    background: linear-gradient(135deg, #E9D5FF, #D8B4FE); /* Lila más claro */
+    color: #000000; /* Negro Absoluto */
     border: none;
     font-family: var(--font-primary);
     font-size: 1rem;
@@ -1921,7 +1922,7 @@ h4 {
 .steps-2in1 span {
   font-size: 13px;
   font-weight: 700;
-  color: #000000; /* Letras Negras */
+  color: #000000; /* Negro Absoluto */
   margin-bottom: 8px;
   display: block;
 }
@@ -1929,7 +1930,7 @@ h4 {
 .steps-2in1 p {
   font-size: 12px;
   font-weight: 500;
-  color: #000000; /* Letras Negras */
+  color: #000000; /* Negro Absoluto */
   margin: 3px 0;
 }
 
@@ -1981,13 +1982,13 @@ h4 {
 .details-2in1 span:nth-child(odd) {
   font-size: 12px;
   font-weight: 600;
-  color: #000000; /* Letras Negras */
+  color: #000000; /* Negro Absoluto */
 }
 
 .details-2in1 span:nth-child(even) {
   font-size: 13px;
   font-weight: 700;
-  color: #000000; /* Letras Negras */
+  color: #000000; /* Negro Absoluto */
   text-align: right;
 }
 
@@ -2014,19 +2015,24 @@ h4 {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 20px;
-  background: #ffffff;
-  border-radius: 7px;
-  border: 1px solid #ffffff;
-  color: #000000; /* Texto Negro */
-  font-size: 14px;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #E9D5FF, #D8B4FE); /* Lila más claro */
+  border-radius: 12px;
+  border: none;
+  color: #000000; /* Negro Absoluto */
+  font-family: var(--font-primary);
+  font-size: 1rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(127, 78, 168, 0.3);
 }
 
 .checkout-btn-2in1:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(127, 78, 168, 0.4);
 }
 
 /* Estilos mejorados para la tarjeta de datos de pago 2 en 1 */
@@ -2041,7 +2047,7 @@ h4 {
 .payment-card-title {
     font-size: 11px;
     font-weight: 700;
-    color: #7F4EA8;
+    color: #000000; /* Negro Absoluto */
     text-transform: uppercase;
     margin-bottom: 10px;
     display: block;
@@ -2063,7 +2069,7 @@ h4 {
 .pm-label-2in1 {
     font-size: 12px;
     font-weight: 600;
-    color: #555555;
+    color: #000000; /* Negro Absoluto */
 }
 
 .pm-value-container-2in1 {
@@ -2075,7 +2081,7 @@ h4 {
 .pm-data-val-2in1 {
     font-size: 13px;
     font-weight: 700;
-    color: #111111;
+    color: #000000; /* Negro Absoluto */
     font-family: 'Inter', sans-serif;
 }
 

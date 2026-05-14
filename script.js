@@ -44,12 +44,7 @@ const cartCount = document.getElementById('cartCount');
 const cartTotalPrice = document.getElementById('cartTotalPrice');
 const checkoutBtn = document.getElementById('checkoutBtn');
 
-const checkoutModal = document.getElementById('checkoutModal');
-const closeCheckoutBtn = document.getElementById('closeCheckout');
-const checkoutSummary = document.getElementById('checkoutSummary');
-const finalTotalPrice = document.getElementById('total-metodo-pago');
-const payBtn = document.getElementById('payBtn');
-const whatsappBtn = document.getElementById('whatsappBtn');
+
 
 const pagoMovilModal = document.getElementById('pagoMovilModal');
 const closePmModal = document.getElementById('closePmModal');
@@ -58,12 +53,7 @@ const pmTotal = document.getElementById('pmTotal');
 const pmFinalPrice = document.getElementById('pmFinalPrice');
 const resumenTotalBs = document.getElementById('resumen-total-bs');
 
-const binanceModal = document.getElementById('binanceModal');
-const closeBinanceModal = document.getElementById('closeBinanceModal');
-const confirmBinanceBtn = document.getElementById('confirmBinanceBtn');
-const binanceSubtotal = document.getElementById('binance-subtotal');
-const binanceTotalPremium = document.getElementById('binance-total-premium');
-const binanceFinalPrice = document.getElementById('binanceFinalPrice');
+
 
 // Costo fijo de delivery en USD
 const COSTO_DELIVERY = 2.00; // $2 fijos para envíos en Maracaibo
@@ -195,11 +185,15 @@ async function syncWithFirebase() {
         Object.keys(data).forEach(fbProductName => {
             const existsInBase = baseProducts.find(p => p.name === fbProductName);
             if (!existsInBase) {
+                // Si 'foto' no existe en Firebase, intentamos construir la ruta basada en el nombre o usamos el logo como último recurso
+                const fbFoto = data[fbProductName].foto || data[fbProductName].imagen;
+                const imagePath = fbFoto ? ensureWebp(fbFoto) : ensureWebp(`assets/${fbProductName}.webp`);
+                
                 dynamicProducts.push({
                     id: newIdCounter++,
                     name: fbProductName,
                     price: parseFloat(data[fbProductName].price) || 0,
-                    image: ensureWebp(data[fbProductName].foto),
+                    image: imagePath,
                     color: 'Único',
                     colorHex: '#cccccc',
                     variants: data[fbProductName].variantes || null,
@@ -225,7 +219,7 @@ async function syncWithFirebase() {
             card.dataset.price = product.price;
             card.id = `product-${safeName}`;
             card.style.display = 'flex';
-            const imageUrl = ensureWebp(product.image);
+            const imageUrl = product.image; // Ya procesado por ensureWebp arriba
             card.innerHTML = `
                 <div class="product-image">
                     <img src="${imageUrl}" alt="${product.name}" ${loadingAttr} width="400" height="400" onerror="handleImageError(this)" style="${imageUrl === FALLBACK_IMAGE ? 'object-fit: contain; padding: 20px;' : ''}">
@@ -379,9 +373,7 @@ window.addEventListener('click', (e) => {
     if (e.target === pagoMovilModal) {
         pagoMovilModal.classList.remove('active');
     }
-    if (e.target === binanceModal) {
-        binanceModal.classList.remove('active');
-    }
+
 });
 
 // Función para mostrar alertas personalizadas (Toasts)
@@ -490,82 +482,49 @@ closeCartBtn.addEventListener('click', () => {
     document.body.style.overflow = '';
 });
 
-// 5. Checkout y WhatsApp
+// 5. Checkout Directo a Pago Móvil
 checkoutBtn.addEventListener('click', () => {
     if (cart.length === 0) {
-        alert('Añade productos a tu carrito primero.');
+        showAlert('Añade productos a tu carrito primero.');
         return;
     }
 
     cartSidebar.classList.remove('active');
 
-    // Generar resumen visual
-    checkoutSummary.innerHTML = cart.map(item => `
-        <div class="summary-item">
-            <div>
-                <div class="summary-item-title">${item.name}</div>
-                <span class="summary-item-variant">Talla: ${item.size} • Color: ${item.color}</span>
-            </div>
-            <span class="checkout-item-price">$${formatPrice(item.price)}</span>
-        </div>
-    `).join('');
-
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const totalFinal = total + COSTO_DELIVERY;
-
-    checkoutSummary.innerHTML += `
-        <div class="summary-item" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
-            <div class="summary-item-title">Subtotal Ropa</div>
-            <span class="checkout-item-price">$${formatPrice(total)}</span>
-        </div>
-        <div class="summary-item">
-            <div class="summary-item-title">Delivery (Maracaibo)</div>
-            <span class="checkout-item-price">$${formatPrice(COSTO_DELIVERY)}</span>
-        </div>
-        <div class="summary-item" style="margin-top: 5px; font-weight: bold; font-size: 1.1em;">
-            <div class="summary-item-title">Total a Pagar</div>
-            <span class="checkout-item-price">$${formatPrice(totalFinal)}</span>
-        </div>
-    `;
-
-    checkoutModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-});
-
-closeCheckoutBtn.addEventListener('click', () => {
-    checkoutModal.classList.remove('active');
-    document.body.style.overflow = '';
-});
-payBtn.addEventListener('click', () => {
-    const selectedPaymentElement = document.querySelector('input[name="payment"]:checked');
-    if (!selectedPaymentElement) return;
-
-    const selectedPayment = selectedPaymentElement.value;
     const total = cart.reduce((sum, item) => sum + item.price, 0);
     const totalConDelivery = total + COSTO_DELIVERY;
 
-    if (selectedPayment === 'pago_movil') {
-        const resumenSubtotal = document.getElementById('resumen-subtotal');
-        const resumenTotalBs = document.getElementById('resumen-total-bs');
-        const pmFinalPrice = document.getElementById('pmFinalPrice');
-        
-        if (resumenSubtotal) resumenSubtotal.textContent = '$' + formatPrice(total);
-        if (resumenTotalBs) resumenTotalBs.textContent = '$' + formatPrice(totalConDelivery);
-        if (pmFinalPrice) pmFinalPrice.textContent = '$' + formatPrice(totalConDelivery);
-        pagoMovilModal.classList.add('active');
-    } else if (selectedPayment === 'binance') {
-        const binanceSubtotal = document.getElementById('binance-subtotal');
-        const binanceTotalPremium = document.getElementById('binance-total-premium');
-        const binanceFinalPrice = document.getElementById('binanceFinalPrice');
-        
-        if (binanceSubtotal) binanceSubtotal.textContent = '$' + formatPrice(total);
-        if (binanceTotalPremium) binanceTotalPremium.textContent = '$' + formatPrice(totalConDelivery);
-        if (binanceFinalPrice) binanceFinalPrice.textContent = '$' + formatPrice(totalConDelivery);
-        const binanceMontoCopiar = document.getElementById('binance-monto-copiar');
-        if (binanceMontoCopiar) binanceMontoCopiar.textContent = formatPrice(totalConDelivery);
-        binanceModal.classList.add('active');
+    // Poblar los campos del modal de Pago Móvil 2 en 1
+    const pagoProductoNombre = document.getElementById('pago-producto-nombre');
+    const pagoProductoPrecio = document.getElementById('pago-producto-precio');
+    const pagoResumenDetalles = document.getElementById('pago-resumen-detalles');
+    const pagoTotalFinal = document.getElementById('pago-total-final');
+    
+    // Mostrar el primer producto o un resumen si hay varios
+    if (cart.length > 0) {
+        pagoProductoNombre.textContent = cart.length === 1 ? cart[0].name : `${cart.length} Productos`;
+        pagoProductoPrecio.textContent = `Precio: $${formatPrice(total)}`;
     }
+
+    // Llenar resumen detallado
+    pagoResumenDetalles.innerHTML = cart.map(item => `
+        <span>${item.name} (${item.color}):</span>
+        <span>$${formatPrice(item.price)}</span>
+    `).join('');
+    
+    pagoResumenDetalles.innerHTML += `
+        <span>Delivery:</span>
+        <span>$${formatPrice(COSTO_DELIVERY)}</span>
+    `;
+
+    if (pagoTotalFinal) pagoTotalFinal.textContent = '$' + formatPrice(totalConDelivery);
+    
+    pagoMovilModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 });
+
+// Fin de Checkout Directo
+
 
 if (closePmModal) {
     closePmModal.addEventListener('click', () => {
@@ -573,14 +532,16 @@ if (closePmModal) {
     });
 }
 
-if (closeBinanceModal) {
-    closeBinanceModal.addEventListener('click', () => {
-        binanceModal.classList.remove('active');
-    });
-}
+
 
 if (confirmPmBtn) {
-    confirmPmBtn.addEventListener('click', () => {
+    confirmPmBtn.addEventListener('click', async () => {
+        const reference = document.getElementById('pago-referencia').value;
+        if (!reference) {
+            showAlert('Por favor, ingresa el número de referencia del pago.');
+            return;
+        }
+
         const phoneNumber = "584126818999";
         let message = "¡Hola! He realizado un pago móvil para mi pedido:\n\n";
 
@@ -593,7 +554,28 @@ if (confirmPmBtn) {
         message += `*Subtotal:* $${formatPrice(total)}\n`;
         message += `*Delivery:* $${formatPrice(COSTO_DELIVERY)}\n`;
         message += `*Total pagado: $${formatPrice(totalFinal)}*\n`;
+        message += `*Referencia:* ${reference}\n`;
         message += `*Método:* Pago Móvil\n\n`;
+        message += `Por favor, verifica mi pago para procesar el envío.`;
+
+        // Notificación al bot vía Firebase (asumiendo que el bot escucha este nodo)
+        try {
+            const pedidoId = Date.now();
+            await fetch(`${FIREBASE_URL}/pedidos/${pedidoId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    items: cart,
+                    total: totalFinal,
+                    referencia: reference,
+                    metodo: 'Pago Móvil',
+                    fecha: new Date().toISOString(),
+                    status: 'Pendiente'
+                })
+            });
+            showAlert('Pedido registrado. Redirigiendo a WhatsApp...');
+        } catch (error) {
+            console.error("Error al notificar al bot:", error);
+        }
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -602,32 +584,21 @@ if (confirmPmBtn) {
     });
 }
 
-const confirmBinanceWhatsappBtn = document.getElementById('confirmBinanceWhatsappBtn');
-if (confirmBinanceWhatsappBtn) {
-    confirmBinanceWhatsappBtn.addEventListener('click', () => {
-        const phoneNumber = "584126818999";
-        const totalRopa = cart.reduce((sum, item) => sum + item.price, 0);
-        const totalFinal = totalRopa + COSTO_DELIVERY;
-        const montoFormateado = formatPrice(totalFinal);
-
-        let message = "¡Hola! Ya he completado mi pago por Binance Pay para mi pedido:\n\n";
-
-        cart.forEach((item, index) => {
-            message += `${index + 1}. *${item.name}*\n   Talla: ${item.size}\n   Color: ${item.color}\n   Precio: $${formatPrice(item.price)}\n\n`;
-        });
-
-        message += `*Subtotal:* $${formatPrice(totalRopa)}\n`;
-        message += `*Delivery:* $${formatPrice(COSTO_DELIVERY)}\n`;
-        message += `*TOTAL TRANSFERIDO:* $${montoFormateado}\n\n`;
-        message += `*Método:* Binance Pay (prietoa976@gmail.com)\n\n`;
-        message += `He adjuntado mi comprobante de transferencia.`;
-
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-        window.open(whatsappUrl, '_blank');
+const btnValidarReferencia = document.getElementById('btn-validar-referencia');
+if (btnValidarReferencia) {
+    btnValidarReferencia.addEventListener('click', () => {
+        const reference = document.getElementById('pago-referencia').value;
+        if (reference.length >= 6) {
+            showAlert('Referencia capturada. Ahora puedes confirmar tu pedido.');
+            btnValidarReferencia.style.background = '#22c55e';
+            btnValidarReferencia.textContent = 'Listo';
+        } else {
+            showAlert('Por favor, ingresa una referencia válida.');
+        }
     });
 }
+
+
 
 // Función para copiar al portapapeles (mantenida por si se usa en otro lado)
 window.copyToClipboard = function (text, iconElement) {

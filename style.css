@@ -313,8 +313,8 @@ h4 {
 
 .product-card {
     --font-color: var(--primary-color);
-    --font-color-sub: #3b1c55;
-    --bg-color: rgba(255, 255, 255, 0.35);
+    --font-color-sub: #222222;
+    --bg-color: #ffffff;
     width: 100%;
     background: var(--bg-color);
     backdrop-filter: blur(20px);
@@ -339,9 +339,9 @@ h4 {
 
 .product-image {
     width: 100%;
-    background: white;
+    background: #f8f8f8;
     border-radius: 18px;
-    aspect-ratio: 1 / 1.1;
+    aspect-ratio: 3 / 4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -440,7 +440,7 @@ h4 {
 .bs-price {
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: #222222;
 }
 
 .product-card .add-to-cart-btn {
@@ -878,144 +878,8 @@ h4 {
     font-weight: 500;
 }
 
-/* Modal de Checkout / WhatsApp */
-.checkout-content {
-    text-align: center;
-    max-width: 550px;
-}
+/* Modal de Pago Móvil 2 en 1 */
 
-.checkout-content h2 {
-    font-weight: 600;
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    color: var(--primary-color);
-}
-
-.checkout-summary {
-    text-align: left;
-    margin-bottom: 2rem;
-    max-height: 250px;
-    overflow-y: auto;
-    border: 1px solid rgba(186, 140, 190, 0.4);
-    padding: 1.5rem;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-.summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    border-bottom: 1px solid rgba(186, 140, 190, 0.2);
-    padding-bottom: 1rem;
-}
-
-.summary-item:last-child {
-    margin-bottom: 0;
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.summary-item-title {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.summary-item-variant {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--secondary-color);
-    margin-top: 0.2rem;
-    font-weight: 500;
-}
-
-.checkout-total {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 2.5rem;
-    padding-top: 1rem;
-    border-top: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    font-family: var(--font-primary);
-}
-
-.whatsapp-btn {
-    width: 100%;
-    padding: 1.2rem;
-    background-color: #25D366;
-    color: white;
-    border: none;
-    font-family: var(--font-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.8rem;
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-}
-
-.whatsapp-btn:hover {
-    background-color: #1EBE57;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-}
-
-.whatsapp-btn i {
-    font-size: 1.4rem;
-}
-
-/* Selector de MÃ©todo de Pago */
-.payment-method-container {
-    width: 100%;
-    padding: 1.5rem;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.6);
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    border: 1px solid rgba(186, 140, 190, 0.3);
-    margin-bottom: 2rem;
-}
-
-.payment-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    text-align: left;
-    margin-bottom: 0.5rem;
-    font-family: var(--font-primary);
-}
-
-.payment-option {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
-    border: 1px solid rgba(127, 78, 168, 0.15);
-    cursor: pointer;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    position: relative;
-    background-color: rgba(127, 78, 168, 0.05);
-}
-
-.payment-option:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.payment-option:has(input:checked) {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    background-color: rgba(127, 78, 168, 0.1);
-}
 
 /* Estilos para los cuadros de Pago MÃ³vil */
 .checkout-section {
@@ -1970,4 +1834,201 @@ h4 {
 .modal-content .price { 
     color: #7F4EA8 !important; 
     font-weight: 700 !important;
+}
+
+/* Estilos para la nueva ventana de resumen y pago 2 en 1 (Tema Lila) */
+.new-checkout-modal {
+    max-width: 500px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.checkout-2in1-container {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 0px;
+  font-family: 'Inter', sans-serif;
+}
+
+.hr-2in1 {
+  height: 1px;
+  background-color: rgba(127, 78, 168, 0.3);
+  border: none;
+  margin: 10px 0;
+}
+
+.card.cart-2in1 {
+  width: 100%;
+  background: #f3e8ff; /* Lila Suave */
+  border-radius: 19px 19px 0px 0px;
+  box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.title-2in1 {
+  width: 100%;
+  height: 40px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  border-bottom: 1px solid rgba(127, 78, 168, 0.3);
+  font-weight: 700;
+  font-size: 12px;
+  color: #000000; /* Letras Negras */
+  background: rgba(127, 78, 168, 0.1);
+}
+
+.steps-2in1 {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.step-2in1 {
+  display: grid;
+  gap: 15px;
+}
+
+.top-info-2in1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.payment-data-2in1 {
+  text-align: right;
+}
+
+.copyable-item {
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: all;
+}
+
+.copyable-item:hover {
+    opacity: 0.7;
+}
+
+.copy-mini {
+    font-size: 10px;
+    margin-left: 4px;
+    color: #7F4EA8;
+}
+
+.steps-2in1 span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #000000; /* Letras Negras */
+  margin-bottom: 8px;
+  display: block;
+}
+
+.steps-2in1 p {
+  font-size: 12px;
+  font-weight: 500;
+  color: #000000; /* Letras Negras */
+  margin: 3px 0;
+}
+
+.form-2in1 {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  gap: 10px;
+  padding: 0px;
+}
+
+.input_field_2in1 {
+  width: auto;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid #7F4EA8;
+  background-color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
+  color: #000000;
+}
+
+.input_field_2in1:focus {
+  border: 1px solid #7F4EA8;
+  box-shadow: 0px 0px 0px 2px rgba(127, 78, 168, 0.2);
+}
+
+.validate-btn-2in1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  height: 36px;
+  background: #7F4EA8;
+  border-radius: 5px;
+  border: 0;
+  font-weight: 600;
+  font-size: 12px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.payments-2in1 .details-2in1 {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px;
+}
+
+.details-2in1 span:nth-child(odd) {
+  font-size: 12px;
+  font-weight: 600;
+  color: #000000; /* Letras Negras */
+}
+
+.details-2in1 span:nth-child(even) {
+  font-size: 13px;
+  font-weight: 700;
+  color: #000000; /* Letras Negras */
+  text-align: right;
+}
+
+.card.checkout-footer-2in1 {
+  width: 100%;
+  background: #7F4EA8;
+  border-radius: 0px 0px 19px 19px;
+}
+
+.footer-2in1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+}
+
+.price-2in1 {
+  font-size: 22px;
+  color: #000000 !important; /* Monto en Negro */
+  font-weight: 900;
+}
+
+.checkout-btn-2in1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  background: #ffffff;
+  border-radius: 7px;
+  border: 1px solid #ffffff;
+  color: #000000; /* Texto Negro */
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.checkout-btn-2in1:hover {
+  transform: scale(1.05);
+}
+
+.copied-success {
+    color: #22c55e !important;
 }

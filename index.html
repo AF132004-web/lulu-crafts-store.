@@ -224,16 +224,28 @@
                                         <p id="pago-producto-precio">Precio: $0.00</p>
                                     </div>
                                 </div>
-                                <div class="payment-data-2in1">
-                                    <span>DATOS DE PAGO</span>
-                                    <div class="copyable-item" onclick="copyData('pm-banco-val', this)">
-                                        <p>Banco: <span id="pm-banco-val">Banco de Venezuela</span> <i class="fa-regular fa-copy copy-mini"></i></p>
+                                <div class="payment-data-2in1 payment-card-2in1">
+                                    <span class="payment-card-title">DATOS DE PAGO</span>
+                                    <div class="payment-row-2in1 copyable-item" onclick="copyData('pm-banco-val', this)">
+                                        <span class="pm-label-2in1">Banco:</span>
+                                        <div class="pm-value-container-2in1">
+                                            <span id="pm-banco-val" class="pm-data-val-2in1">Banco de Venezuela</span>
+                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                        </div>
                                     </div>
-                                    <div class="copyable-item" onclick="copyData('pm-ci-val', this)">
-                                        <p>C.I: <span id="pm-ci-val">30.813.795</span> <i class="fa-regular fa-copy copy-mini"></i></p>
+                                    <div class="payment-row-2in1 copyable-item" onclick="copyData('pm-ci-val', this)">
+                                        <span class="pm-label-2in1">C.I:</span>
+                                        <div class="pm-value-container-2in1">
+                                            <span id="pm-ci-val" class="pm-data-val-2in1">30.813.795</span>
+                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                        </div>
                                     </div>
-                                    <div class="copyable-item" onclick="copyData('pm-tlf-val', this)">
-                                        <p>Tlf: <span id="pm-tlf-val">04129045914</span> <i class="fa-regular fa-copy copy-mini"></i></p>
+                                    <div class="payment-row-2in1 copyable-item" onclick="copyData('pm-tlf-val', this)">
+                                        <span class="pm-label-2in1">Tlf:</span>
+                                        <div class="pm-value-container-2in1">
+                                            <span id="pm-tlf-val" class="pm-data-val-2in1">04129045914</span>
+                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -263,7 +275,10 @@
                 <!-- Footer con el Total y Botón de Check -->
                 <div class="card checkout-footer-2in1">
                     <div class="footer-2in1">
-                        <label class="price-2in1" id="pago-total-final">$0.00</label>
+                        <div class="price-box-2in1">
+                            <span class="price-label-white">Total:</span>
+                            <span class="price-2in1" id="pago-total-final">$0</span>
+                        </div>
                         <button class="checkout-btn-2in1" id="confirmPmBtn">Pagar &#10004;</button>
                     </div>
                 </div>

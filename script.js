@@ -534,48 +534,69 @@ if (closePmModal) {
 
 
 
-if (confirmPmBtn) {
-    confirmPmBtn.addEventListener('click', async () => {
-        const reference = document.getElementById('pago-referencia').value;
+let isReferenceValidated = false;
+
+// Actualización de la lógica de validación de referencia
+const btnValidarReferencia = document.getElementById('btn-validar-referencia');
+if (btnValidarReferencia) {
+    btnValidarReferencia.addEventListener('click', async () => {
+        const reference = document.getElementById('pago-referencia').value.trim();
+        
         if (!reference) {
             showAlert('Por favor, ingresa el número de referencia del pago.');
             return;
         }
 
-        const phoneNumber = "584126818999";
-        let message = "¡Hola! He realizado un pago móvil para mi pedido:\n\n";
-
-        cart.forEach((item, index) => {
-            message += `${index + 1}. *${item.name}*\n   Talla: ${item.size}\n   Color: ${item.color}\n   Precio: $${formatPrice(item.price)}\n\n`;
-        });
-
         const total = cart.reduce((sum, item) => sum + item.price, 0);
         const totalFinal = total + COSTO_DELIVERY;
-        message += `*Subtotal:* $${formatPrice(total)}\n`;
-        message += `*Delivery:* $${formatPrice(COSTO_DELIVERY)}\n`;
-        message += `*Total pagado: $${formatPrice(totalFinal)}*\n`;
-        message += `*Referencia:* ${reference}\n`;
-        message += `*Método:* Pago Móvil\n\n`;
-        message += `Por favor, verifica mi pago para procesar el envío.`;
+        const totalFormateado = formatPrice(totalFinal);
 
-        // Notificación al bot vía Firebase (asumiendo que el bot escucha este nodo)
+        // Enviar notificación a Firebase para que el bot la capture y envíe a Telegram
         try {
-            const pedidoId = Date.now();
-            await fetch(`${FIREBASE_URL}/pedidos/${pedidoId}.json`, {
+            const reporteId = Date.now();
+            await fetch(`${FIREBASE_URL}/reportes_pago/${reporteId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({
-                    items: cart,
-                    total: totalFinal,
                     referencia: reference,
-                    metodo: 'Pago Móvil',
-                    fecha: new Date().toISOString(),
-                    status: 'Pendiente'
+                    monto: totalFormateado,
+                    items: cart,
+                    fecha: new Date().toISOString()
                 })
             });
-            showAlert('Pedido registrado. Redirigiendo a WhatsApp...');
+            
+            // Feedback visual
+            btnValidarReferencia.textContent = '¡Validado!';
+            btnValidarReferencia.classList.add('validate-success');
+            isReferenceValidated = true;
+            showAlert('Referencia capturada con éxito. Ahora puedes pulsar "Pagar".');
+            
+            // Opcional: habilitar visualmente el botón de pagar si tuviera un estado disabled
+            document.getElementById('confirmPmBtn').style.opacity = '1';
         } catch (error) {
-            console.error("Error al notificar al bot:", error);
+            console.error("Error al reportar pago:", error);
+            showAlert('Error al conectar con el servidor. Inténtalo de nuevo.');
         }
+    });
+}
+
+if (confirmPmBtn) {
+    confirmPmBtn.addEventListener('click', () => {
+        if (!isReferenceValidated) {
+            showAlert('Primero debes "Validar" tu número de referencia.');
+            return;
+        }
+
+        const reference = document.getElementById('pago-referencia').value.trim();
+        const phoneNumber = "584129045914";
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        const totalFinal = total + COSTO_DELIVERY;
+        const totalFormateado = formatPrice(totalFinal);
+
+        // Resumen de productos
+        const resumenPedido = cart.map(item => `${item.name} (${item.color})`).join(', ');
+
+        // Mensaje exacto solicitado
+        const message = `¡Hola! Acabo de realizar el pago por mi pedido en la web. El monto total es $${totalFormateado} y mi número de referencia validado es: ${reference}. Este es mi pedido: ${resumenPedido}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -584,19 +605,6 @@ if (confirmPmBtn) {
     });
 }
 
-const btnValidarReferencia = document.getElementById('btn-validar-referencia');
-if (btnValidarReferencia) {
-    btnValidarReferencia.addEventListener('click', () => {
-        const reference = document.getElementById('pago-referencia').value;
-        if (reference.length >= 6) {
-            showAlert('Referencia capturada. Ahora puedes confirmar tu pedido.');
-            btnValidarReferencia.style.background = '#22c55e';
-            btnValidarReferencia.textContent = 'Listo';
-        } else {
-            showAlert('Por favor, ingresa una referencia válida.');
-        }
-    });
-}
 
 
 

@@ -119,10 +119,12 @@ function renderProducts() {
                 <i class="ri-sparkle-line sparkle-icon"></i>
             </div>
             <div class="product-info">
-                <h2 class="product-title">${product.name}</h2>
-                <p class="product-description">${product.description}</p>
-                <div class="price-display">
-                    <span class="bs-price">$${formatPrice(product.price)}</span>
+                <div class="product-info-box">
+                    <h2 class="product-title">${product.name}</h2>
+                    <p class="product-description">${product.description}</p>
+                    <div class="price-display">
+                        <span class="bs-price">$${formatPrice(product.price)}</span>
+                    </div>
                 </div>
                 <!-- Indicador de Stock Sincronizado -->
                 <div class="product-stock" id="stock-${safeName}">Cargando stock...</div>

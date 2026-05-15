@@ -657,26 +657,52 @@ function copyData(elementId, button) {
 // Función para inicializar animaciones de texto (split por caracteres)
 function initTextAnimations() {
     const animatables = document.querySelectorAll('.text-animate');
-    animatables.forEach(el => {
-        const text = el.innerText;
-        const by = el.getAttribute('data-by') || 'character';
+    
+    // Batch Read
+    const data = Array.from(animatables).map(el => ({
+        el,
+        text: el.textContent, // textContent es más eficiente que innerText ya que no fuerza layout
+        by: el.getAttribute('data-by') || 'character'
+    }));
 
-        if (by === 'character') {
-            el.innerHTML = text.split('').map((char, i) =>
-                `<span style="--index: ${i}">${char === ' ' ? '&nbsp;' : char}</span>`
-            ).join('');
-        }
+    // Batch Write con requestAnimationFrame
+    window.requestAnimationFrame(() => {
+        data.forEach(({ el, text, by }) => {
+            if (by === 'character') {
+                el.innerHTML = text.split('').map((char, i) =>
+                    `<span style="--index: ${i}">${char === ' ' ? '&nbsp;' : char}</span>`
+                ).join('');
+            }
+        });
     });
 }
 
 // Lógica de Magnificación del Dock (Estilo Magic UI)
 function initDockMagnification() {
-    const dockWrapper = document.querySelector('.dock-wrapper');
-    const dockItems = document.querySelectorAll('.dock-item');
+    const dockWrapper = document.querySelector('.dock-wrapper-static');
+    const dockItems = document.querySelectorAll('.dock-item-static');
 
-    if (!dockWrapper) return;
+    if (!dockWrapper || !dockItems.length) return;
 
-    // Detectar movimiento cerca del dock (lado izquierdo)
+    let cachedRects = [];
+
+    // Función para cachear posiciones de los items
+    function updateCachedRects() {
+        cachedRects = Array.from(dockItems).map(item => {
+            const rect = item.getBoundingClientRect();
+            return {
+                item,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2
+            };
+        });
+    }
+
+    // Inicializar y actualizar en eventos de cambio de layout
+    updateCachedRects();
+    window.addEventListener('resize', updateCachedRects);
+    window.addEventListener('scroll', updateCachedRects, { passive: true });
+
     let isTicking = false;
     window.addEventListener('mousemove', (e) => {
         if (!isTicking) {
@@ -684,69 +710,68 @@ function initDockMagnification() {
                 const mouseX = e.clientX;
                 const mouseY = e.clientY;
 
-                // Solo activar si el mouse está en el tercio izquierdo de la pantalla
-                if (mouseX > 250) {
+                // Solo activar si el mouse está cerca de la zona del dock (ajustado a la lógica de la página)
+                // Si el mouse está muy lejos, reseteamos rápidamente
+                if (mouseX > 500) { // Umbral de desactivación
                     dockItems.forEach(item => {
-                        item.style.transform = 'scale(1)';
-                        item.style.marginTop = '0';
-                        item.style.marginBottom = '0';
+                        item.style.transform = '';
+                        item.style.margin = '';
                     });
                     isTicking = false;
                     return;
                 }
 
-                // Separating reads and writes to prevent layout thrashing
-                const itemStates = Array.from(dockItems).map(item => {
-                    const rect = item.getBoundingClientRect();
-                    const centerX = rect.left + rect.width / 2;
-                    const centerY = rect.top + rect.height / 2;
+                const maxDistance = 120;
+                const maxScale = 1.4;
+
+                cachedRects.forEach(({ item, centerX, centerY }) => {
                     const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
                     
                     let scale = 1;
                     let marginValue = 0;
-                    const maxDistance = 120;
-                    const maxScale = 1.4;
 
                     if (distance < maxDistance) {
                         scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
                         marginValue = (scale - 1) * 10;
                     }
                     
-                    return { item, scale, marginValue };
-                });
-
-                itemStates.forEach(({ item, scale, marginValue }) => {
                     item.style.transform = `scale(${scale})`;
                     item.style.marginTop = `${marginValue}px`;
                     item.style.marginBottom = `${marginValue}px`;
                 });
+                
                 isTicking = false;
             });
             isTicking = true;
         }
     });
 
-    // Reset total al salir
     dockWrapper.addEventListener('mouseleave', () => {
-        dockItems.forEach(item => {
-            item.style.transform = 'scale(1)';
-            item.style.marginTop = '0';
-            item.style.marginBottom = '0';
+        window.requestAnimationFrame(() => {
+            dockItems.forEach(item => {
+                item.style.transform = '';
+                item.style.margin = '';
+            });
         });
     });
 }
 
 // Inicialización de la tienda
 document.addEventListener('DOMContentLoaded', () => {
-    // Mostrar loading mientras Firebase carga los datos reales
-    productGrid.innerHTML = `
-        <div class="loading-catalog">
-            <i class="ri-loader-4-line ri-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
-            <p>Cargando colección...</p>
-        </div>
-    `;
-    // Iniciar sincronización directa con Firebase (no renderizar hardcoded primero)
-    syncWithFirebase();
-    initTextAnimations();
-    initDockMagnification();
+    window.requestAnimationFrame(() => {
+        // Mostrar loading mientras Firebase carga los datos reales
+        if (productGrid) {
+            productGrid.innerHTML = `
+                <div class="loading-catalog">
+                    <i class="ri-loader-4-line ri-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    <p>Cargando colección...</p>
+                </div>
+            `;
+        }
+        
+        // Iniciar sincronización directa con Firebase (no renderizar hardcoded primero)
+        syncWithFirebase();
+        initTextAnimations();
+        initDockMagnification();
+    });
 });

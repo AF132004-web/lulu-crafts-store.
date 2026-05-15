@@ -105,7 +105,11 @@ function renderProducts() {
     
     products.forEach((product, index) => {
         const safeName = product.name.replace(/\s+/g, '-');
-        const loadingAttr = (index === 0) ? 'fetchpriority="high"' : 'loading="lazy"';
+        const isHero = index === 0;
+        const isAboveFold = index < 4;
+        let loadingAttr = '';
+        if (isHero) loadingAttr = 'fetchpriority="high"';
+        if (!isAboveFold) loadingAttr = 'loading="lazy"';
         
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -212,7 +216,11 @@ async function syncWithFirebase() {
         
         products.forEach((product, index) => {
             const safeName = product.name.replace(/\s+/g, '-');
-            const loadingAttr = (index === 0) ? 'fetchpriority="high"' : 'loading="lazy"';
+            const isHero = index === 0;
+            const isAboveFold = index < 4;
+            let loadingAttr = '';
+            if (isHero) loadingAttr = 'fetchpriority="high"';
+            if (!isAboveFold) loadingAttr = 'loading="lazy"';
             
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -456,7 +464,7 @@ function updateCart() {
                 <h4 class="cart-item-title">${item.name}</h4>
                 <p class="cart-item-variant">Talla: ${item.size} | Color: ${item.color}</p>
                 <p class="cart-item-price">$${formatPrice(item.price)}</p>
-                <button class="remove-item" onclick="removeFromCart(${item.id})">Eliminar</button>
+                <button class="remove-item" onclick="removeFromCart(${item.id})" aria-label="Eliminar producto del carrito">Eliminar</button>
             </div>
         </div>
     `).join('');

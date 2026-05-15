@@ -19,7 +19,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- FontAwesome for Checkout Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preload" href="assets/logo-tienda.webp" as="image">
+    <link rel="preload" href="assets/logo-tienda.webp" as="image" fetchpriority="high">
     <!-- Integración lista para Fetch API nativa -->
 </head>
 
@@ -32,7 +32,7 @@
     <header class="header">
         <div class="header-spacer"></div>
         <div class="brand-container">
-            <img src="assets/logo-tienda.webp" alt="Lulu Crafts Profile" class="profile-photo" width="80" height="80">
+            <img src="assets/logo-tienda.webp" alt="Lulu Crafts Profile" class="profile-photo" width="80" height="80" fetchpriority="high">
             <h1 class="brand-name text-animate" id="brandName" data-animation="blurInUp" data-by="character">Lulu Crafts
             </h1>
         </div>

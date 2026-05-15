@@ -106,7 +106,10 @@ function renderProducts() {
     products.forEach((product, index) => {
         const safeName = product.name.replace(/\s+/g, '-');
         const isHero = index === 0;
-        const loadingAttr = isHero ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
+        const isAboveFold = index < 4;
+        let loadingAttr = '';
+        if (isHero) loadingAttr = 'fetchpriority="high"';
+        if (!isAboveFold) loadingAttr += ' loading="lazy" decoding="async"';
         
         const card = document.createElement('div');
         card.className = 'product-card';
@@ -214,7 +217,10 @@ async function syncWithFirebase() {
         products.forEach((product, index) => {
             const safeName = product.name.replace(/\s+/g, '-');
             const isHero = index === 0;
-            const loadingAttr = isHero ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
+            const isAboveFold = index < 4;
+            let loadingAttr = '';
+            if (isHero) loadingAttr = 'fetchpriority="high"';
+            if (!isAboveFold) loadingAttr += ' loading="lazy" decoding="async"';
             
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -316,7 +322,7 @@ window.openProductModal = function (productId) {
 
     const imageUrl = ensureWebp(currentModalImage);
     modalBody.innerHTML = `
-        <img src="${imageUrl}" class="modal-product-img" id="modal-main-img" alt="${currentProduct.name}" onerror="handleImageError(this)">
+        <img src="${imageUrl}" class="modal-product-img" id="modal-main-img" alt="${currentProduct.name}" width="600" height="600" onerror="handleImageError(this)">
         <h2 class="modal-product-title">${currentProduct.name}</h2>
         <p class="modal-product-price">$${formatPrice(currentProduct.price)}</p>
         
@@ -453,7 +459,7 @@ function updateCart() {
 
     cartItemsContainer.innerHTML = cart.map(item => `
         <div class="cart-item">
-            <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+            <img src="${item.image}" alt="${item.name}" class="cart-item-img" width="80" height="100">
             <div class="cart-item-details">
                 <h4 class="cart-item-title">${item.name}</h4>
                 <p class="cart-item-variant">Talla: ${item.size} | Color: ${item.color}</p>

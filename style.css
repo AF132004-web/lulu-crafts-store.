@@ -1563,8 +1563,8 @@ h4 {
 
 .delivery-schedule {
     font-size: 14px;
-    color: #555;
-    font-weight: 500;
+    color: #000000; /* Negro Absoluto para máxima legibilidad */
+    font-weight: 700;
     display: inline-block;
     background: rgba(255, 255, 255, 0.5);
     padding: 8px 16px;
@@ -1597,14 +1597,16 @@ h4 {
 }
 
 .location-card h3 {
-    color: #666; /* Gris oscuro unificado con la descripción */
+    color: #000000; /* Negro Absoluto para contraste */
+    font-weight: 700;
     font-size: 16px;
     margin: 10px 0 5px 0;
 }
 
 .location-card p {
     font-size: 12px;
-    color: #666;
+    color: #000000; /* Negro Absoluto para contraste */
+    font-weight: 600;
     margin: 0;
 }
 

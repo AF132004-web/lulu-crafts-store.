@@ -16,13 +16,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Pinyon+Script&display=swap"
         rel="stylesheet">
-    <!-- Iconos RemixIcon -->
+    <link rel="preload" href="assets/logo-tienda.webp" as="image" fetchpriority="high">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" as="style">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <!-- FontAwesome for Checkout Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preload" href="assets/logo-tienda.webp" as="image" fetchpriority="high">
-    <!-- Integración lista para Fetch API nativa -->
 </head>
 
 <body>
@@ -59,7 +55,7 @@
         <div class="delivery-header">
             <h2 class="delivery-title">Puntos de Entrega</h2>
             <p class="delivery-schedule">
-                <i class="fa-regular fa-clock"></i> Lunes a Viernes | Toma de órdenes: 10:00 AM | Envíos: 1:00 PM
+                <i class="ri-time-line"></i> Lunes a Viernes | Toma de órdenes: 10:00 AM | Envíos: 1:00 PM
             </p>
         </div>
 
@@ -68,26 +64,26 @@
                 class="location-link">
                 <div class="location-card">
                     <div class="map-icon-container">
-                        <i class="fa-solid fa-map map-base"></i>
-                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                        <i class="ri-map-2-line map-base"></i>
+                        <i class="ri-map-pin-2-fill red-pin"></i>
                     </div>
                     <h3>C.C. Gran Bazar</h3>
                     <p>Punto de entrega centro</p>
                     <span class="view-map-text">Ver en mapa <i
-                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                            class="ri-external-link-line"></i></span>
                 </div>
             </a>
 
             <a href="https://www.google.com/maps/search/Sambil+Maracaibo" target="_blank" class="location-link">
                 <div class="location-card">
                     <div class="map-icon-container">
-                        <i class="fa-solid fa-map map-base"></i>
-                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                        <i class="ri-map-2-line map-base"></i>
+                        <i class="ri-map-pin-2-fill red-pin"></i>
                     </div>
                     <h3>C.C. Sambil</h3>
                     <p>Punto de entrega norte</p>
                     <span class="view-map-text">Ver en mapa <i
-                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                            class="ri-external-link-line"></i></span>
                 </div>
             </a>
 
@@ -95,13 +91,13 @@
                 class="location-link">
                 <div class="location-card">
                     <div class="map-icon-container">
-                        <i class="fa-solid fa-map map-base"></i>
-                        <i class="fa-solid fa-location-dot red-pin animated-pin"></i>
+                        <i class="ri-map-2-line map-base"></i>
+                        <i class="ri-map-pin-2-fill red-pin"></i>
                     </div>
                     <h3>C.C. Metrosol</h3>
                     <p>Punto de entrega sur</p>
                     <span class="view-map-text">Ver en mapa <i
-                            class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                            class="ri-external-link-line"></i></span>
                 </div>
             </a>
         </div>
@@ -207,21 +203,21 @@
                                         <span class="pm-label-2in1">Banco:</span>
                                         <div class="pm-value-container-2in1">
                                             <span id="pm-banco-val" class="pm-data-val-2in1">Banco de Venezuela</span>
-                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                            <i class="ri-file-copy-line copy-mini-2in1"></i>
                                         </div>
                                     </div>
                                     <div class="payment-row-2in1 copyable-item" onclick="copyData('pm-ci-val', this)">
                                         <span class="pm-label-2in1">C.I:</span>
                                         <div class="pm-value-container-2in1">
                                             <span id="pm-ci-val" class="pm-data-val-2in1">31800133</span>
-                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                            <i class="ri-file-copy-line copy-mini-2in1"></i>
                                         </div>
                                     </div>
                                     <div class="payment-row-2in1 copyable-item" onclick="copyData('pm-tlf-val', this)">
                                         <span class="pm-label-2in1">Tlf:</span>
                                         <div class="pm-value-container-2in1">
                                             <span id="pm-tlf-val" class="pm-data-val-2in1">04126818999</span>
-                                            <i class="fa-regular fa-copy copy-mini-2in1"></i>
+                                            <i class="ri-file-copy-line copy-mini-2in1"></i>
                                         </div>
                                     </div>
                                 </div>

@@ -330,7 +330,7 @@ window.openProductModal = function (productId) {
             <span class="option-label">Talla</span>
             <div class="size-options">
                 <button class="size-btn selected-size">
-                    <i class="fa-solid fa-check-circle"></i> Talla Única
+                    <i class="ri-checkbox-circle-fill"></i> Talla Única
                 </button>
             </div>
         </div>
@@ -643,11 +643,11 @@ function copyData(elementId, button) {
         const icon = button.querySelector('i');
 
         // 4. Cambiar la clase para poner el ganchito y el color azul
-        icon.className = 'fa-solid fa-check copied-success';
+        icon.className = 'ri-check-line copied-success';
 
         // 5. Devolverlo a la normalidad después de 2 segundos (2000 ms)
         setTimeout(() => {
-            icon.className = 'fa-regular fa-copy';
+            icon.className = 'ri-file-copy-line';
         }, 2000);
     }).catch(err => {
         console.error('Error al copiar: ', err);
@@ -701,26 +701,24 @@ function initDockMagnification() {
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
                     const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
-                    return { item, distance };
+                    
+                    let scale = 1;
+                    let marginValue = 0;
+                    const maxDistance = 120;
+                    const maxScale = 1.4;
+
+                    if (distance < maxDistance) {
+                        scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
+                        marginValue = (scale - 1) * 10;
+                    }
+                    
+                    return { item, scale, marginValue };
                 });
 
-                const maxDistance = 120; // Radio ligeramente menor
-                const maxScale = 1.4;    // Escala más sutil para no tapar contenido
-
-                itemStates.forEach(({ item, distance }) => {
-                    if (distance < maxDistance) {
-                        const scale = 1 + (maxScale - 1) * (1 - distance / maxDistance);
-                        item.style.transform = `scale(${scale})`;
-
-                        // Espaciado vertical dinámico
-                        const marginValue = (scale - 1) * 10;
-                        item.style.marginTop = `${marginValue}px`;
-                        item.style.marginBottom = `${marginValue}px`;
-                    } else {
-                        item.style.transform = 'scale(1)';
-                        item.style.marginTop = '0';
-                        item.style.marginBottom = '0';
-                    }
+                itemStates.forEach(({ item, scale, marginValue }) => {
+                    item.style.transform = `scale(${scale})`;
+                    item.style.marginTop = `${marginValue}px`;
+                    item.style.marginBottom = `${marginValue}px`;
                 });
                 isTicking = false;
             });
